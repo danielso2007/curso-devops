@@ -1,0 +1,87 @@
+---
+- name: Configurar servidor de aplicação Java
+  hosts: app01
+  become: yes
+  remote_user: vagrant
+  vars_files:
+    - vars/main.yml
+  tasks:
+    - name: Upgrade de todos os pacotes do s.o
+      become: yes
+      apt:
+        update_cache: yes
+    - name: Adicionar usuario de app
+      become: yes
+      user:
+        name: app
+        comment: Usuario de aplicação
+        uid: 500
+    - name: Instalação do Maven
+      become: yes
+      apt:
+        name: maven
+        state: latest
+    - name: Instalação do Java
+      become: yes
+      apt:
+        name: openjdk-8-jdk
+        state: latest
+    - name: Criação do diretório de app
+      file:
+        path: /opt/notes
+        state: directory
+        owner: app
+        group: app
+    - name: Instalacao do git client
+      become: yes
+      apt:
+        name: git
+        state: latest
+    - name: Configurar exceção Git para /opt/notes
+      command: git config --global --add safe.directory /opt/notes
+    - name: Clone do repositório Notes - app
+      become: yes
+      git:
+        repo: 'https://github.com/callicoder/spring-boot-mysql-rest-api-tutorial.git'
+        dest: /opt/notes
+        version: master
+        clone: yes
+        force: yes
+    - name: Configurar arquivo de propriedades para camada de banco de dados
+      become: yes
+      template:
+        src: application.properties
+        dest: /opt/notes/src/main/resources/application.properties
+    - name: Gerar pacote da aplicação
+      become: yes
+      command: mvn -f /opt/notes/pom.xml package
+    - name: Registrar versao atual do pacote
+      shell:
+        cmd: mvn org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\['
+        chdir: /opt/notes/
+      register: app_version # salvando em variável a versão do aplicativo spring-boot para ser usado no start do serviço
+    - name: Configurar serviço
+      become: yes
+      template:
+        src: etc/systemd/system/notes.service
+        dest: /etc/systemd/system/notes.service
+    - name: Iniciar daemon-reload
+      become: yes
+      command: systemctl daemon-reload
+    - name: Iniciar serviço notes
+      become: yes
+      command: systemctl start notes.service
+    - name: Habilitando o serviço
+      become: yes
+      command: systemctl enable notes.service
+  roles:
+      - configuracao-default-so
+  handlers:
+    - name: reload app
+      systemd:
+        state: restarted
+        daemon_reload: yes 
+        name: 'notes'
+    - name: reload daemon
+      systemd:
+        daemon_reexec: yes

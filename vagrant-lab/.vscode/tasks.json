@@ -4,7 +4,7 @@
 		{
             "label": "Vagrant UP",
             "type": "shell",
-            "command": "cd vagrant-lab && vagrant up",
+            "command": "vagrant up",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +14,7 @@
         {
             "label": "Vagrant SSH",
             "type": "shell",
-            "command": "cd vagrant-lab && vagrant ssh",
+            "command": "vagrant ssh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -24,7 +24,7 @@
         {
             "label": "Vagrant PROVISION",
             "type": "shell",
-            "command": "cd vagrant-lab && vagrant provision",
+            "command": "vagrant provision",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -34,7 +34,7 @@
         {
             "label": "Vagrant RELOAD",
             "type": "shell",
-            "command": "cd vagrant-lab && vagrant reload",
+            "command": "vagrant reload",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -44,7 +44,7 @@
         {
             "label": "Vagrant DESTROY",
             "type": "shell",
-            "command": "cd vagrant-lab && vagrant destroy",
+            "command": "vagrant destroy",
             "group": {
                 "kind": "build",
                 "isDefault": true

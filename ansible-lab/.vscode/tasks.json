@@ -1,0 +1,185 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "Control-node | Vagrant UP",
+            "type": "shell",
+            "command": "cd control-node && vagrant up",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Control-node | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "cd control-node && vagrant suspend",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Control-node | Vagrant SSH",
+            "type": "shell",
+            "command": "cd control-node && vagrant ssh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Control-node | Vagrant PROVISION",
+            "type": "shell",
+            "command": "cd control-node && vagrant provision",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Control-node | Vagrant RELOAD",
+            "type": "shell",
+            "command": "cd control-node && vagrant reload",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Control-node | Vagrant DESTROY",
+            "type": "shell",
+            "command": "cd control-node && vagrant destroy",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant UP",
+            "type": "shell",
+            "command": "cd app01 && vagrant up",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "cd app01 && vagrant suspend",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant SSH",
+            "type": "shell",
+            "command": "cd app01 && vagrant ssh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant PROVISION",
+            "type": "shell",
+            "command": "cd app01 && vagrant provision",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant RELOAD",
+            "type": "shell",
+            "command": "cd app01 && vagrant reload",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "app01 | Vagrant DESTROY",
+            "type": "shell",
+            "command": "cd app01 && vagrant destroy",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant UP",
+            "type": "shell",
+            "command": "cd db01 && vagrant up",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "cd db01 && vagrant suspend",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant SSH",
+            "type": "shell",
+            "command": "cd db01 && vagrant ssh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant PROVISION",
+            "type": "shell",
+            "command": "cd db01 && vagrant provision",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant RELOAD",
+            "type": "shell",
+            "command": "cd db01 && vagrant reload",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "db01 | Vagrant DESTROY",
+            "type": "shell",
+            "command": "cd db01 && vagrant destroy",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+	]
+}
