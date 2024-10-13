@@ -1,0 +1,55 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "Vagrant UP",
+            "type": "shell",
+            "command": "cd vagrant-lab && vagrant up",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Vagrant SSH",
+            "type": "shell",
+            "command": "cd vagrant-lab && vagrant ssh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Vagrant PROVISION",
+            "type": "shell",
+            "command": "cd vagrant-lab && vagrant provision",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Vagrant RELOAD",
+            "type": "shell",
+            "command": "cd vagrant-lab && vagrant reload",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Vagrant DESTROY",
+            "type": "shell",
+            "command": "cd vagrant-lab && vagrant destroy",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+	]
+}
