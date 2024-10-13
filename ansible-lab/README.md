@@ -66,6 +66,13 @@ O sistema operacional informa que você corre o risco de danificar seu sistema.
 pipx install some-python-application
 ```
 
+
+# Diagrama do Projeto
+
+Esse projeto monta o esquema abaixo.
+
+![Texto alternativo](./doc/ansible.drawio.png)
+
 # Acessando a máquina control-node
 
 Para verificar os exemplos de configuração de host, acessar `cd control-node && vagrant ssh`.
