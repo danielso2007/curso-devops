@@ -1,0 +1,20 @@
+FROM alpine/git:v2.45.2 AS versionstage
+RUN mkdir /opt/note
+WORKDIR /opt/note
+RUN git clone https://github.com/callicoder/spring-boot-mysql-rest-api-tutorial.git /opt/note
+
+FROM maven:3.9.9-eclipse-temurin-11-alpine AS buildstage
+RUN mkdir /opt/note
+WORKDIR /opt/note
+COPY --from=versionstage /opt/note .
+RUN mvn -q package -Dmaven.test.skip=true
+
+FROM amazoncorretto:11.0.24-alpine
+RUN addgroup -S notes && adduser -S notes -G notes
+RUN mkdir /opt/note
+RUN chown -R notes:notes /opt/note
+USER notes:notes
+WORKDIR /opt/note
+COPY --from=buildstage /opt/note/target/easy-notes-1.0.0.jar .
+COPY ./config-app/application.properties application.properties
+ENTRYPOINT ["java","-jar","/opt/note/easy-note.jar"]

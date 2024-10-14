@@ -1,0 +1,51 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Docker build Java",
+            "type": "shell",
+            "command": "cd java-exemplo && docker build -t devops/notes .",
+            "group": "build"
+        },
+        {
+            "label": "Docker multi-stage build  Java",
+            "type": "shell",
+            "command": "cd java-exemplo && docker build -f DockerfileStage -t devops/notes:1.0.0 . --no-cache",
+            "group": "build"
+        },
+        {
+            "label": "Nodejs Example Image",
+            "type": "shell",
+            "command": "cd node-app-exemplo && docker build -t devops/node-app:1.0.0 .",
+            "group": "build"
+        },
+        {
+            "label": "Nodejs Example Run",
+            "type": "shell",
+            "command": "cd node-app-exemplo && docker run --net devops --name node-app -d -p 8081:3000 devops/node-app:1.0.0",
+            "group": "test"
+        },
+        {
+            "label": "Nodejs Example Remove Image",
+            "type": "shell",
+            "command": "docker stop node-app && docker rm node-app && docker image rm devops/node-app:1.0.0",
+            "group": "none"
+        },
+        {
+            "label": "Criar imagem Redis",
+            "type": "shell",
+            "command": "docker run --net devops --name redis-server -d redis",
+            "group": "none"
+        },
+        {
+            "label": "Apagar imagem Redis",
+            "type": "shell",
+            "command": "docker stop redis-server && docker rm redis-server && docker image rm redis:latest",
+            "group": "none"
+        }
+    ]
+    
+}
+
