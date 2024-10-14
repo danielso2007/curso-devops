@@ -1,0 +1,10 @@
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    deploy: # Define as configurações de deployment para o serviço.
+      replicas: 3 # Especifica o número de réplicas do serviço (3 no nosso caso).
+      mode: replicated # Define o modo de serviço (replicated: várias réplicas idênticas).
+      placement: # Define as restrições de placement para as tarefas do serviço.
+        constraints: [node.role == worker] # Define as restrições para os nós onde as tarefas podem ser executadas (apenas em nós com o rótulo "node.role == worker").

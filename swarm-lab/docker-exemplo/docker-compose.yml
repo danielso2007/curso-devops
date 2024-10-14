@@ -1,0 +1,68 @@
+services:
+  manager:
+    image: docker:dind
+    container_name: manager
+    privileged: true
+    networks:
+      - swarm-net
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - manager-data:/var/lib/docker
+      - ./manager-volume:/home
+    command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    ports:
+      - "2375:2375"  # Expor porta para comunicação
+      - "8090:80"  # Expor porta para comunicação
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  worker1:
+    image: docker:dind
+    container_name: worker1
+    privileged: true
+    networks:
+      - swarm-net
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - worker1-data:/var/lib/docker
+    command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    depends_on:
+      - manager
+
+  worker2:
+    image: docker:dind
+    container_name: worker2
+    privileged: true
+    networks:
+      - swarm-net
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - worker2-data:/var/lib/docker
+    command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    depends_on:
+      - manager
+
+networks:
+  swarm-net:
+    driver: bridge
+
+volumes:
+  manager-data:
+  worker1-data:
+  worker2-data:
