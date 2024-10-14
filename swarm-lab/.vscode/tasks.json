@@ -1,0 +1,147 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Vagrant UP",
+            "type": "shell",
+            "command": "vagrant up",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Manager | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "vagrant suspend manager",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Manager | Vagrant SSH",
+            "type": "shell",
+            "command": "vagrant ssh manager",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Manager | Vagrant PROVISION",
+            "type": "shell",
+            "command": "vagrant provision manager",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Manager | Vagrant RELOAD",
+            "type": "shell",
+            "command": "vagrant reload manager",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Vagrant DESTROY",
+            "type": "shell",
+            "command": "vagrant destroy manager && vagrant destroy worker1 && vagrant destroy worker2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker1 | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "vagrant suspend worker1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker1 | Vagrant SSH",
+            "type": "shell",
+            "command": "vagrant ssh worker1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker1 | Vagrant PROVISION",
+            "type": "shell",
+            "command": "vagrant provision worker1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker1 | Vagrant RELOAD",
+            "type": "shell",
+            "command": "vagrant reload worker1",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker2 | Vagrant SUSPEND",
+            "type": "shell",
+            "command": "vagrant suspend worker2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker2 | Vagrant SSH",
+            "type": "shell",
+            "command": "vagrant ssh worker2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker2 | Vagrant PROVISION",
+            "type": "shell",
+            "command": "vagrant provision worker2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Worker2 | Vagrant RELOAD",
+            "type": "shell",
+            "command": "vagrant reload worker2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

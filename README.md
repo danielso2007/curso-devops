@@ -6,3 +6,5 @@ O que temos nesse repositório:
 
 - **Vagrant**: Sua Máquina Virtual Personalizada
 - **Ansible**: Uma Ferramenta Essencial para Automação de TI
+- **Docker**: Exemplo de docker
+- **Swarm**: Exemplos de docker Swarm
