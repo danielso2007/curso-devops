@@ -8,3 +8,5 @@ O que temos nesse repositório:
 - **Ansible**: Uma Ferramenta Essencial para Automação de TI
 - **Docker**: Exemplo de docker
 - **Swarm**: Exemplos de docker Swarm
+- **SonarQube**: Exemplo de instalação
+- **Jenkins**: Exemplo de instalação e uso
