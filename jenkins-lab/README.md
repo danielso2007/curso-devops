@@ -122,7 +122,7 @@ Foi criado um repositório privado no github `redis-app`. Depois criado um pipel
 - Em `Pipeline`, definir como `Pipeline script from SCM`
 - SCM como git
   - Adicionar o `Repositories URL`
-  - Adicionar as credenciais: `jenkins-docker-casa` -> No github, criar em `Personal access tokens` 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  soner squ_069e1312f9178720a3283ed7522be197a7c5cce2
+  - Adicionar as credenciais: `jenkins-docker-casa` -> No github, criar em `Personal access tokens`
 - Criar um arquivo `Jenkinsfile` na aplicação
 
 ## Testando a aplicação
