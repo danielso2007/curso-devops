@@ -121,9 +121,9 @@ Foi criado um repositório privado no github `redis-app`. Depois criado um pipel
 - Nome `redis-app` do tipo pipeline
 - Em `Pipeline`, definir como `Pipeline script from SCM`
 - SCM como git
-- Adicionar o `Repositories URL`
-- Adicionar as credenciais: `jenkins-casa` -> No github, criar em `Personal access tokens`
-- Criar um arquivo `Jenkinsfile`
+  - Adicionar o `Repositories URL`
+  - Adicionar as credenciais: `jenkins-docker-casa` -> No github, criar em `Personal access tokens` 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  soner squ_069e1312f9178720a3283ed7522be197a7c5cce2
+- Criar um arquivo `Jenkinsfile` na aplicação
 
 ## Testando a aplicação
 
@@ -150,9 +150,9 @@ Acesse as configurações do Jenkins: [localhost:8080/manage/configure](http://l
 - Name: sonar-sever
 - Server URL: http:192.168.56.6:9000
 - Add Server authentication token --> Criar lá no sonar
-- Kind: `Secret text`
-- Secret: adicionar o token criado no Sonar
-- ID: secret-sonar
+  - Kind: `Secret text`
+  - Secret: adicionar o token criado no Sonar
+  - ID: secret-sonar
 
 ### Configurar o tools
 
@@ -161,3 +161,14 @@ Ir em `Painel de controle > Gerenciar Jenkins > Tools`. Acessar: SonarQube Scann
 - Name: sonar-scanner
 - Não instalar automaticamente
 - SONAR_RUNNER_HOME: `/opt/sonar-scanner`
+
+
+## Associado ao projeto jenkins
+
+Tem o próximo estudo que conecta o jenkins ao sonar. Para testar a comunicação interna, usar: `telnet 192.168.56.5 8080`
+
+Para retonar o resultado para o jenkins, configurar o Webhooks:
+
+`Administration > Configuration > Webhooks > Create` e a URL deve apontar para o seu servidor Jenkins `http://{JENKINS_HOST}/sonarqube-webhook/`
+
+Exemplo: `http://192.168.56.5:8080/sonarqube-webhook/`

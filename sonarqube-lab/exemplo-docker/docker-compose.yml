@@ -14,6 +14,9 @@ services:
     user: 1000:1000
     ports:
       - "9000:9000"
+    networks:
+      - sonar-jenkins-network
+      - sonar-db-network
   db:
     image: postgres:12.20-alpine3.20
     environment:
@@ -22,6 +25,8 @@ services:
     volumes:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - sonar-db-network
 
 volumes:
   sonarqube_data:
@@ -29,3 +34,7 @@ volumes:
   sonarqube_logs:
   postgresql:
   postgresql_data:
+
+networks:
+  sonar-jenkins-network:
+  sonar-db-network:
