@@ -10,3 +10,4 @@ O que temos nesse repositório:
 - **Swarm**: Exemplos de docker Swarm
 - **SonarQube**: Exemplo de instalação
 - **Jenkins**: Exemplo de instalação e uso
+- **Nexus**: Ferramenta usada para gerenciar repositórios de artefatos de software
