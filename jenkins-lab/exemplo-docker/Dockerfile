@@ -38,3 +38,6 @@ RUN jenkins-plugin-cli --plugins sonar
 RUN jenkins-plugin-cli --plugins pipeline-utility-steps
 RUN jenkins-plugin-cli --plugins pipeline-stage-view
 RUN jenkins-plugin-cli --plugins github-autostatus
+RUN jenkins-plugin-cli --plugins nodejs
+RUN jenkins-plugin-cli --plugins all-changes
+RUN jenkins-plugin-cli --plugins last-changes

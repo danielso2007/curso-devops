@@ -1,0 +1,25 @@
+services:
+  nexus:
+    image: sonatype/nexus3:3.73.0-java17-alpine
+    container_name: nexus
+    user: root
+    ports:
+      - "8094:8094"
+      - "8123:8123"
+    volumes:
+      - nexus-data:/nexus-data
+      - ./ssl:/nexus-data/etc/ssl
+      - ./etc/nexus.properties:/nexus-data/etc/nexus.properties
+      - ./jetty/jetty-https.xml:/opt/sonatype/nexus/etc/jetty/jetty-https.xml
+    environment:
+      NEXUS_SECURITY_RANDOMPASSWORD: false  # Desabilitar senha aleatória na inicialização
+      INSTALL4J_ADD_VM_PARAMS: "-Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m"
+    restart: unless-stopped
+    networks:
+      - sonar-jenkins-network
+
+volumes:
+  nexus-data:
+
+networks:
+  sonar-jenkins-network:
