@@ -162,13 +162,16 @@ Ir em `Painel de controle > Gerenciar Jenkins > Tools`. Acessar: SonarQube Scann
 - Não instalar automaticamente
 - SONAR_RUNNER_HOME: `/opt/sonar-scanner`
 
-
 ## Associado ao projeto jenkins
 
-Tem o próximo estudo que conecta o jenkins ao sonar. Para testar a comunicação interna, usar: `telnet 192.168.56.5 8080`
+Tem o próximo estudo que conecta o jenkins ao sonar. Para testar a comunicação interna, usar: `telnet 192.168.56.5 9090`
 
 Para retonar o resultado para o jenkins, configurar o Webhooks:
 
 `Administration > Configuration > Webhooks > Create` e a URL deve apontar para o seu servidor Jenkins `http://{JENKINS_HOST}/sonarqube-webhook/`
 
-Exemplo: `http://192.168.56.5:8080/sonarqube-webhook/`
+Exemplo: `http://192.168.56.5:9090/sonarqube-webhook/`
+
+## Acessando o registry docker / images
+
+Criar uma variável global no jenkins: `NEXUS_URL=localhost:8123`.

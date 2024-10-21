@@ -28,7 +28,7 @@ Entrar no container:
 
 É preciso que o docker do sonarQube do estudo anterior, também esteja sendo executado em docker.
 
-Acesse as configurações do Jenkins: [localhost:8080/manage/configure](http://localhost:8080/manage/configure).
+Acesse as configurações do Jenkins: [localhost:9090/manage/configure](http://lo8080calhost:9090/manage/configure).
 
 - `Environment variables` = check true
 - Add SonarQube
@@ -49,10 +49,10 @@ Ir em `Painel de controle > Gerenciar Jenkins > Tools`. Acessar: SonarQube Scann
 
 ## Associado ao projeto jenkins - Docker Sonar
 
-Tem o próximo estudo que conecta o jenkins ao sonar. Para testar a comunicação interna, usar: `telnet jenkins 8080`
+Tem o próximo estudo que conecta o jenkins ao sonar. Para testar a comunicação interna, usar: `telnet jenkins 9090`
 
 Para retonar o resultado para o jenkins, configurar o Webhooks:
 
 `Administration > Configuration > Webhooks > Create` e a URL deve apontar para o seu servidor Jenkins `http://{JENKINS_HOST}/sonarqube-webhook/`
 
-Exemplo: `http://jenkins:8080/sonarqube-webhook/`
+Exemplo: `http://jenkins:9090/sonarqube-webhook/`

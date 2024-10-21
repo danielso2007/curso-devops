@@ -50,7 +50,7 @@ No exemplo acima, coloquei a senha: `123456`. Esse senha foi colocada no `jetty/
 
 ## Criando usuário para integração com o jenkins
 
-Para a integração com o jenkins, criar um usuário login `jenkins` e senha `jenkins123`. Lembrando de é apenas estudo, por isso essa simplicidade de login e senha.
+Para a integração com o jenkins, criar um usuário login `jenkins` e senha `jenkins123`. Lembrando de é apenas estudo, por isso essa simplicidade de login e senha. É preciso criar no Jenkins das credenciais, com ID `jenkins-nexus`, assim o pipeline da aplciação pega as informações para subir a imagens para o nexus.
 
 ## Criar um docker repo
 
@@ -58,7 +58,7 @@ Para nosso estudo, criar um repositório para as imagens docker (registry docker
 
 - Repositories
   - docker (hosted)
-    - nome: `docker-rep`
+    - nome: `docker-repo`
     - HTTPS: `8123` | Exposto lá no docker compose
 
 ## Teste manual
