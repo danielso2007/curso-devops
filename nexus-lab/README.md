@@ -39,10 +39,17 @@ Quando logar pela primeira vez, usar login: `admin` e senha: `admin123`.
 
 ### SSL
 
-Antes de tudo, é preciso criar o certificado para colocarmos o docker registry em HTTPS.
+Antes de tudo, é preciso criar o certificado para colocarmos o docker registry em HTTPS. Usamos o `ssl/openssl.cnf` para criar.
 
 Executar dentro da pastas `ssl`:
 ```shell
+cd ssl
+openssl genpkey -algorithm RSA -out nexus-key.pem
+openssl req -new -x509 -key nexus-key.pem -out nexus-cert.pem -days 365 -config openssl.cnf
+openssl x509 -in nexus-cert.pem -outform der -out nexus-cert-with-san.der
+keytool -importcert -alias nexus -file nexus-cert-with-san.der -keystore nexus.jks
+
+
 keytool -genkeypair -alias nexus -keyalg RSA -keysize 2048 -keystore nexus.jks -validity 365
 ```
 

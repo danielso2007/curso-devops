@@ -145,6 +145,14 @@ source ~/.bashrc
 
 ### Adicionando o certificado do nexus local para o K3s
 
+Abra o arquivo /etc/hosts com um editor de texto:
+
+```shell
+sudo nano /etc/hosts
+```
+
+Adicione: `192.168.0.160 nexus.local`. Teste com `telnet`: `telnet nexus.local 8094`
+
 ```shell
 cd /etc/rancher/k3s/
 openssl s_client -connect 192.168.0.160:8094 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > /etc/rancher/k3s/exus-cert.pem
@@ -160,9 +168,9 @@ cat <<EOT >> /etc/rancher/k3s/registries.yaml
 mirrors:
   docker.io:
     endpoint:
-      - https://192.168.0.160:8094
+      - https://nexus.local:8094
 configs:
-  192.168.0.160:8094:
+  nexus.local:8094:
     auth:
       username: jenkins
       password: jenkins123
@@ -207,6 +215,7 @@ rancher-webhook             ClusterIP   10.43.248.64    <none>        443/TCP   
 ```shell
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 sudo chmod 755 /etc/rancher/k3s/k3s.yaml
+sudo systemctl restart k3s
 ```
 
 ### Adicionando porta ao POD do Rancher
@@ -239,7 +248,7 @@ rancher                     NodePort   10.43.253.245   <none>        80:30406/TC
 rancher-webhook             NodePort   10.43.248.64    <none>        443:30791/TCP                14m
 ```
 
-Para acessá-lo, use a porta definida acima `https://<IP-LOCAL>:<PORT_CONFIGURADA_K3S>/dashboard`. Exemplo: `https://192.168.56.150:31676/dashboard/?setup=admin`.
+Para acessá-lo, use a porta definida acima `https://<IP-LOCAL>:<PORT_CONFIGURADA_K3S>/dashboard`. Exemplo: `https://192.168.56.150:32154/dashboard/?setup=admin`.
 
 #### Observação:
 Normalmente é `admin`. Para ober a senha:
