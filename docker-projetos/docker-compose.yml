@@ -1,17 +1,22 @@
 services:
   jenkins:
     build:
-      context: .
-      dockerfile: ./DockerfileJenkins
+      context: ./
+      dockerfile: ./jenkins/Dockerfile
     container_name: jenkins-local
     privileged: true
     user: root
     ports:
-      - 9090:8080
+      - 9090:8443 # ssl
       - 50000:50000
+    environment:
+      JENKINS_OPTS: "-Xmx2048m --httpPort=8080 --httpsPort=8443 --httpsKeyStore=/var/ssl/keystore.jks --httpsKeyStorePassword=123456"
+      JENKINS_HTTPS_KEYSTORE: "/var/ssl/keystore.jks"
+      JENKINS_HTTPS_KEYSTORE_PASSWORD: "123456" # senha-em-texto-não criptografado-para-armazenamento-de-chaves
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins/ssl:/var/ssl
     restart: always
     networks:
       - sonar-jenkins-network
@@ -20,7 +25,7 @@ services:
   sonarqube:
     build:
       context: .
-      dockerfile: ./DockerfileSonar
+      dockerfile: ./sonar/Dockerfile
     image: local/sonarqube:latest
     container_name: sonar-local
     depends_on:

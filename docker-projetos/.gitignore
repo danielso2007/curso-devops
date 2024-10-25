@@ -1,0 +1,11 @@
+.vagrant
+*.log
+node_modules
+.scannerwork
+*.env
+*.jks
+*.pem
+*.der
+*.crt
+*.key
+*.pfx
