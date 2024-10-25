@@ -54,7 +54,7 @@ Executar nas pasta do projeto o `npm` e o `sonar-scanner` (instalado via npm):
 
 ```shell
 npm i
-nom run sonar
+npm run sonar
 ```
 
 Dando tudo certo, só verificar o sonar [localhost:9000/dashboard](http://localhost:9000/dashboard?id=redis-app&selectedTutorial=local)

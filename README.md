@@ -11,3 +11,4 @@ O que temos nesse repositório:
 - **SonarQube**: Exemplo de instalação
 - **Jenkins**: Exemplo de instalação e uso
 - **Nexus**: Ferramenta usada para gerenciar repositórios de artefatos de software
+- **docker-projetos**: Docker completo do projeto nexus, sonarQube e jenkins em um só. Esse passou a ser o principal, pois tem todos os projeto estudados juntos.

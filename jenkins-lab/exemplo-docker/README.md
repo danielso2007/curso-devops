@@ -28,7 +28,7 @@ Entrar no container:
 
 É preciso que o docker do sonarQube do estudo anterior, também esteja sendo executado em docker.
 
-Acesse as configurações do Jenkins: [localhost:9090/manage/configure](http://lo8080calhost:9090/manage/configure).
+Acesse as configurações do Jenkins: [localhost:9090/manage/configure](http://localhost:9090/manage/configure).
 
 - `Environment variables` = check true
 - Add SonarQube
