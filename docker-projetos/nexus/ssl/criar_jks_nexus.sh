@@ -21,7 +21,33 @@ rm -rf *.pem
 rm -rf *.jks
 rm -rf *.der
 
-export NEXUS_DOMAIN="nexus"
-export NEXUS_IP_ADDRESS="192.168.0.160"
-keytool -genkeypair -keystore keystore.jks -storepass 123456 -keypass 123456 -alias nexus -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=BR" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
+export OPENSSL_CN="nexus"
+export NEXUS_DOMAIN_OPENSSL_IP_ADDRESS="192.168.0.160"
+export OPENSSL_C=BR
+export OPENSSL_ST=SaoPaulo
+export OPENSSL_L=SaoPaulo
+export OPENSSL_O=MinhaEmpresa
+export OPENSSL_OU=TI
+export OPENSSL_PASS=123456
+
+openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-nexus-privada.key -out certificado-nexus.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+sudo cp certificado-nexus.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+
+openssl x509 -req -in node.csr -CA certificado-nexus.crt -CAkey key-nexus-privada.key -CAcreateserial -out certificado-nexus.csr -days 5000
+
+openssl pkcs12 -export -out certificado-nexus.pfx -inkey key-nexus-privada.key -in certificado-nexus.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+
+keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-nexus.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${NEXUS_DOMAIN_OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
 sudo chown 666 keystore.jks
+
+#keytool -genkeypair -keystore keystore.jks -storepass 123456 -keypass 123456 -alias nexus -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=BR" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
+
+rm -rf *.pem
+rm -rf *.der
+rm -rf *.crt
+rm -rf *.key
+rm -rf *.pfx
+rm -rf *.csr
+rm -rf *.srl

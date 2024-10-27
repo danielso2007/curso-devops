@@ -28,8 +28,9 @@ read resposta
 if [[ "$resposta" == *"sim"* || "$resposta" == *"s"* ]]; then
     echo -e "${BROWN_ORANGE}Removendo volumes...${NC}"
     # Remove a pasta recursivamente
-    docker volume rm docker-projetos_rancher-data docker-projetos_k3s-config docker-projetos_k3s-data docker-projetos_nexus-data docker-projetos_postgresql docker-projetos_postgresql_data docker-projetos_sonarqube_data docker-projetos_sonarqube_extensions docker-projetos_sonarqube_logs
+    docker volume rm docker-projetos_rancher-data docker-projetos_k3s-config docker-projetos_k3s-data docker-projetos_k3s-cluster-config docker-projetos_k3s-cluster-data docker-projetos_nexus-data docker-projetos_postgresql docker-projetos_postgresql_data docker-projetos_sonarqube_data docker-projetos_sonarqube_extensions docker-projetos_sonarqube_logs
     sudo rm -rf ./k3s/output
+    sudo rm -rf ./k3s/output-cluster
     docker volume prune
     docker volume ls
 fi

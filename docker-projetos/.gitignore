@@ -13,4 +13,5 @@ keystore.jks
 *.csr
 *.srl
 output
+output-cluster
 kubeconfig.yaml

@@ -19,5 +19,7 @@ NC='\033[0m' # No Color
 echo -e "${LIGHT_BLUE}Subindo projeto...${NC}"
 docker compose up -d
 docker compose ps
-echo -e "${BROWN_ORANGE}Senha do rancher...${NC}"
-docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
+echo -e "${LIGHT_BLUE}Passando o K3s para node do rancher.${NC}"
+echo -e "${LIGHT_BLUE}Aguarde...${NC}"
+sleep 60
+./novo-k3s-refazer-token.sh

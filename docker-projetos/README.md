@@ -1,8 +1,20 @@
 # Docker Projetos
 
 Essa pasta juntou todos os estudos em um único docker.
+Para iniciar:
 
-### DNS local
+1. Faça a ação do item `DNS local`;
+2. Execute o sh `./criar-certificados.sh`, para criar os certificados auto assinados;
+3. Execute `./start.sh`;
+4. Após subir os containers, executar `./novo-k3s-refazer-token.sh`:
+    - Irá parar o container `k3s`;
+    - Exibirá o token do `rancher` para criação de novo node;
+    - Ajuste o `docker-compose.yml`, conforme ação do item `Incluindo um novo node no rancher do nosso container k3s`
+    - O container será reiniciado.
+5. No `rancher`, o nosso container `K3s` aparecerá como node no cluster `local`;
+6. Continue com as ações abaixo para seguir com as configurações.
+
+# DNS local
 
 Recomendo nomes para facilitar nosso acesso aos containers:
 
@@ -20,7 +32,7 @@ Edite o arquivo adicionando os nomes:
 127.0.0.1 rancher.local
 ```
 
-### Portas
+## Portas
 
 | APP | HTTP | HTTPS | OUTRO | DNS |
 |---|---|---|---|---|
@@ -123,69 +135,62 @@ Para acessar o Rancher, obter a senha com o comando abaixo:
 docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
 
 $ rancher-local  | 2024/10/26 21:14:03 [INFO] Bootstrap Password: xxxxxxxx
+
 ```
-Agora acesse [https://rancher.local:9343/](https://rancher.local:9343/).
 
-## Incluindo um novo cluster do nosso container k3s
+Agora acesse [https://rancher.local:9343/dashboard/?setup=xxxxxxxx](https://rancher.local:9343/dashboard/?setup=xxxxxxxx).
 
-Como estamos em estudo de kubernete e Rancher, vamos adicionar um novo cluster para usarmos o nosso container `k3s` criado no nosso `docker compose`. A ideia aqui é possibilitar a criação de clusters para ambientes diferentes.
+### Token para um novo node:
 
+Execute: `docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token`.
 
+# Incluindo um novo node no rancher do nosso container k3s
 
-container-k3s
-Cluster do container k3s
+Depois da primeira execução, é preciso executar o sh `novo-k3s-refazer-token.sh`. Ao executar, o container `k3s` é removido. Logo após, é obtido o token no container `rancher` para ser colocado na variável `K3S_TOKEN` do `docker compose` do nosso projeto. Após isso, um novo node será incluídos no `rancher` no cluster `local`.
 
+# Novo cluster no rancher
+
+No item anterior, colocamos um agente (node) no rancher. Agora estamos adicionando um cluster no rancher, para isso, foi criado um container `k3s-cluster` configurado para ser um kubernate normal. Para adicionado, seguir os passos abaixo:
+
+- Primeiro precisamos mudar o endereço para um interno do `k3s-cluster`, para isso, execute:
+    - Dentro do `k3s-cluster` o comando `telnet rancher 9999`;
+    - Irá mostrar o IP do rancher após um erro;
+    - Pegue esse IP;
+- Acesse o rancher na parte `Global Settings` e `Settings`:
+    - No campo `server-url`, troque de `https://rancher.local:9343/` para `https://172.21.0.4`;
+    - Esse IP é interno do cluster `k3s-cluster`;
+    - **Observação**: isso é porque estamos com estudo e dentro de docker em produção não será assim;
+    - Sempre olhe esse campo para futuras modificações.
+- Volte para a `home`, clicar em `Import Existing`;
+- Escolha `Import any Kubernetes cluster > Generic`;
+- Adicione um nome ao cluster: `k3s-cluster`;
+- Clique em `create`;
+- Será exibido vários ações, neste momento:
+    - Copie o endereço do `yaml` apenas, exemplo: `https://172.21.0.4/v3/import/x6mlgc6s87dg2mx6ls2dn.yaml`;
+    - Copie o conteúdo e adicione no arquivo `./k3s/yaml/cluster.yaml`;
+    - Esse arquivo está como volume do nosso container `k3s-cluster`.
+- Agora acesse via `exec` o container `k3s-cluster`;
+- Acesse a paster `/opt/yaml`;
+- Excecute `kubectl apply -f cluster.yaml` para adicionar o cluster ao rancher;
+- Se tudo der certo, será criado um novo cluster no rancher.
+
+## Caso precise examinar o Pod criado
+
+Em alguns caso, pode dar erro e você precise analisar, então abaixo alguns comandos úteis:
+
+Ver todos os pods:
 ```shell
-curl --insecure -fL https://rancher:443/system-agent-install.sh | sudo  sh -s - --server https://rancher:443 --label 'cattle.io/os=linux' --token xxxxx --ca-checksum xxxx --etcd --controlplane --worker
+kubectl get pods --all-namespaces
 ```
 
-docker compose stop k3s
-docker compose rm k3s
-docker volume rm docker-projetos_k3s-config docker-projetos_k3s-data
-docker compose up -d
-sudo apt-get install xclip
-Obter o token no rancher: cat /var/lib/rancher/k3s/server/node-token
-trocar no docker compose K3S_TOKEN do docker k3s
-
-
-CATTLE_AGENT_BINARY_BASE_URL="https://172.21.0.3/assets" CATTLE_SERVER="https://172.21.0.3" curl --insecure -fL https://172.21.0.3/system-agent-install.sh | CATTLE_AGENT_BINARY_BASE_URL="https://172.21.0.3/assets" CATTLE_SERVER="https://172.21.0.3" sh -s - --server https://172.21.0.3 --label 'cattle.io/os=linux' --token bv8d5mv5nkr4mfnzbrnqgdqj6n8phr8f796nr7r4v4qql68m6g9hvs --ca-checksum 7637bc252fea071f9db903c822fdfc96aff98632cab36b21fd7ffc18513c0c06 --etcd --controlplane --worker
-Trocar o CN para o ip interno do docker do racnher
-rancher/ssl/criar_rancher_pem.sh
-
-
+Ver os logs do pod:
 ```shell
-kubectl delete pod curl                                                                                                # Deletando se necessário
-kubectl run curl --image=curlimages/curl --overrides='{"spec": {"securityContext": {"runAsUser": 0}}}' -i --tty -- sh  # Instalando a imagem do curl
-apk add openssl                                                                                                        # Instalar o openssl
+kubectl logs <NOME-DO-POD> -n <NAME-SPACE>
 ```
 
-Se precisar entrar depois:
+## Deletando o pod criado
 
+Se precisar deletar o pod que foi criado o cluster no rancher, execute o comando baixo:
 ```shell
-kubectl exec -it curl -- /bin/sh
+kubectl delete -f cluster.yaml 
 ```
-
-curl -k https://172.21.0.3/cacerts
-
-
-export DEBUG=1
-
-export CATTLE_AGENT_BINARY_BASE_URL="https://172.21.0.3/assets"
-export CATTLE_SERVER="https://172.21.0.3/"
-
-curl curl --insecure -fL https://172.21.0.3/system-agent-install.sh > system-agent-install.sh
-
-
-CATTLE_AGENT_BINARY_BASE_URL="https://172.21.0.3/assets" CATTLE_SERVER="https://172.21.0.3" curl --insecure -fL https://172.21.0.3/system-agent-install.sh | CATTLE_AGENT_BINARY_BASE_URL="https://172.21.0.3/assets" CATTLE_SERVER="https://172.21.0.3" sh -s - --server https://172.21.0.3 --label 'cattle.io/os=linux' --token bv8d5mv5nkr4mfnzbrnqgdqj6n8phr8f796nr7r4v4qql68m6g9hvs --ca-checksum 7637bc252fea071f9db903c822fdfc96aff98632cab36b21fd7ffc18513c0c06 --etcd --controlplane --worker
-
-609
-
-curl curl --insecure -fL https://172.21.0.3/system-agent-install.sh > arquivo.txt
-
-curl curl --insecure -fL https://rancher.local:9343/system-agent-install.sh > arquivo.txt
-
-openssl s_client -connect 172.21.0.3:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM > certificado.pem
-cp certificado.pem /etc/ssl/certs/
-export CURL_CA_BUNDLE=certificado.pem
-
-curl --cacert certificado.pem https://172.21.0.3

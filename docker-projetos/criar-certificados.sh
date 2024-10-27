@@ -25,7 +25,3 @@ cd jenkins/ssl
 ./criar_jks_jenkins.sh
 cd ..
 cd ..
-cd rancher/ssl
-./criar_rancher_pem.sh
-cd ..
-cd ..

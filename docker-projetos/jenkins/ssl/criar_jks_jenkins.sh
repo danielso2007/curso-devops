@@ -23,9 +23,34 @@ rm -rf *.der
 rm -rf *.crt
 rm -rf *.key
 rm -rf *.pfx
-openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-jenkins-privada.key -out certificado-jenkins.crt -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=jenkins" -passin pass:123456 -passout pass:123456
-openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=jenkins" -passin pass:123456 -passout pass:123456
-openssl x509 -req -in node.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out certificado-jenkins.crt -days 5000
-openssl pkcs12 -export -out certificado-jenkins.pfx -inkey key-jenkins-privada.key -in certificado-jenkins.crt -passin pass:123456 -passout pass:123456
-keytool -importkeystore -storepass 123456 -keypass 123456 -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
+rm -rf *.csr
+rm -rf *.srl
+
+export OPENSSL_CN="nexus"
+export JENKINS_OPENSSL_IP_ADDRESS="192.168.0.160"
+export OPENSSL_C=BR
+export OPENSSL_ST=SaoPaulo
+export OPENSSL_L=SaoPaulo
+export OPENSSL_O=MinhaEmpresa
+export OPENSSL_OU=TI
+export OPENSSL_PASS=123456
+
+openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-jenkins-privada.key -out certificado-jenkins.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+sudo cp certificado-jenkins.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+
+openssl x509 -req -in node.csr -CA certificado-jenkins.crt -CAkey key-jenkins-privada.key -CAcreateserial -out certificado-jenkins.csr -days 5000
+
+openssl pkcs12 -export -out certificado-jenkins.pfx -inkey key-jenkins-privada.key -in certificado-jenkins.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+
+keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${JENKINS_OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
 sudo chown 666 keystore.jks
+
+rm -rf *.pem
+rm -rf *.der
+rm -rf *.crt
+rm -rf *.key
+rm -rf *.pfx
+rm -rf *.csr
+rm -rf *.srl
