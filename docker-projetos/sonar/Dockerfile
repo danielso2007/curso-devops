@@ -1,5 +1,4 @@
 FROM sonarqube:9.9.7-community
-USER root
 RUN apt-get -qq update
 RUN apt-get -qq install wget unzip
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh

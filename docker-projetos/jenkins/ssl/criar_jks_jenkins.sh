@@ -33,3 +33,4 @@ echo -e "${BROWN_ORANGE}Criando keystore.jks...${NC}"
 keytool -importkeystore -storepass 123456 -keypass 123456 -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
 echo -e "${BROWN_ORANGE}Permissão keystore.jks...${NC}"
 sudo chown 666 keystore.jks
+echo -e "${LIGHT_BLUE}Fim certificado para o Jenkins...${NC}"

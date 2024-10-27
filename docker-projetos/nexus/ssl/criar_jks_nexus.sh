@@ -27,3 +27,4 @@ echo -e "${BROWN_ORANGE}Criando keystore.jks...${NC}"
 keytool -genkeypair -keystore keystore.jks -storepass 123456 -keypass 123456 -alias nexus -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=BR" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
 echo -e "${BROWN_ORANGE}Dando permissão para keystore.jks...${NC}"
 sudo chown 666 keystore.jks
+echo -e "${LIGHT_BLUE}Fim certificado para o Nexus...${NC}"

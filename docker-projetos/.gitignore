@@ -9,3 +9,5 @@ node_modules
 *.crt
 *.key
 *.pfx
+output
+kubeconfig.yaml
