@@ -4,10 +4,13 @@ node_modules
 .scannerwork
 *.env
 *.jks
+keystore.jks
 *.pem
 *.der
 *.crt
 *.key
 *.pfx
+*.csr
+*.srl
 output
 kubeconfig.yaml

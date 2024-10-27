@@ -23,14 +23,9 @@ rm -rf *.der
 rm -rf *.crt
 rm -rf *.key
 rm -rf *.pfx
-echo -e "${BROWN_ORANGE}Criando key-jenkins-privada.key...${NC}"
-openssl genpkey -algorithm RSA -out key-jenkins-privada.key
-echo -e "${BROWN_ORANGE}Criando certificado-jenkins.crt...${NC}"
-openssl req -new -x509 -key key-jenkins-privada.key -out certificado-jenkins.crt -days 365 -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=jenkins.local" -passout pass:123456
-echo -e "${BROWN_ORANGE}Criando certificado-jenkins.pfx...${NC}"
+openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-jenkins-privada.key -out certificado-jenkins.crt -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=jenkins" -passin pass:123456 -passout pass:123456
+openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=jenkins" -passin pass:123456 -passout pass:123456
+openssl x509 -req -in node.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out certificado-jenkins.crt -days 5000
 openssl pkcs12 -export -out certificado-jenkins.pfx -inkey key-jenkins-privada.key -in certificado-jenkins.crt -passin pass:123456 -passout pass:123456
-echo -e "${BROWN_ORANGE}Criando keystore.jks...${NC}"
 keytool -importkeystore -storepass 123456 -keypass 123456 -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
-echo -e "${BROWN_ORANGE}Permissão keystore.jks...${NC}"
 sudo chown 666 keystore.jks
-echo -e "${LIGHT_BLUE}Fim certificado para o Jenkins...${NC}"

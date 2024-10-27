@@ -17,7 +17,15 @@ LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 echo -e "${LIGHT_BLUE}Subindo projeto...${NC}"
-docker compose up -d
-docker compose ps
-echo -e "${BROWN_ORANGE}Senha do rancher...${NC}"
-docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
+cd nexus/ssl
+./criar_jks_nexus.sh
+cd ..
+cd ..
+cd jenkins/ssl
+./criar_jks_jenkins.sh
+cd ..
+cd ..
+cd rancher/ssl
+./criar_rancher_pem.sh
+cd ..
+cd ..

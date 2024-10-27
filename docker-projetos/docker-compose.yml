@@ -121,9 +121,9 @@ services:
       - k3s-rancher-network
     volumes:
       - rancher-data:/var/lib/rancher
-      - ./rancher/ssl/cert.pem:/etc/rancher/ssl/cert.pem
-      - ./rancher/ssl/key.pem:/etc/rancher/ssl/key.pem
-      - ./rancher/ssl/cacerts.pem:/etc/rancher/ssl/cacerts.pem
+      # - ./rancher/ssl/cert.pem:/etc/rancher/ssl/cert.pem
+      # - ./rancher/ssl/key.pem:/etc/rancher/ssl/key.pem
+      # - ./rancher/ssl/cacerts.pem:/etc/rancher/ssl/cacerts.pem
     depends_on:
       - sonarqube
       - jenkins

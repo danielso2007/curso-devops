@@ -3,3 +3,13 @@
 node_modules
 .scannerwork
 .env
+*.env
+*.jks
+*.pem
+*.der
+*.crt
+*.key
+*.pfx
+*.csr
+output
+kubeconfig.yaml

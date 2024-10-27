@@ -23,12 +23,13 @@ rm -rf *.der
 rm -rf *.crt
 rm -rf *.key
 rm -rf *.pfx
-echo -e "${BROWN_ORANGE}Criando key.pem e cert.pem...${NC}"
-openssl genpkey -algorithm RSA -out key-rancher-privada.key -pkeyopt rsa_keygen_bits:2048
-openssl rsa -in key-rancher-privada.key -text > key.pem
-openssl req -new -x509 -key key-rancher-privada.key -nodes -days 365 -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=172.21.0.3" -passin pass:123456 -passout pass:123456 -out cert.pem
-openssl req -new -x509 -key key-rancher-privada.key -days 365 -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=172.21.0.3" -passin pass:123456 -passout pass:123456 -out cacerts.pem
+# Crie a CA
+openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout ca.key -out ca.crt -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=172.21.0.3" -passin pass:123456 -passout pass:123456
+# Crie o CSR do Nó
+openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=BR/ST=SaoPaulo/L=SaoPaulo/O=MinhaEmpresa/OU=TI/CN=172.21.0.3" -passin pass:123456 -passout pass:123456
+# Assine o CSR
+openssl x509 -req -in node.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out node.crt -days 5000
+
 sudo chown 666 key-rancher-privada.key
 sudo chown 666 cert.pem
 sudo chown 666 cacerts.pem
-echo -e "${LIGHT_BLUE}Fim certificado para o Rancher...${NC}"
