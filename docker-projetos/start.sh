@@ -16,10 +16,35 @@ LIGHT_CYAN='\033[1;36m'
 LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
+parar="start"
+clear
+
+loading() {
+for ((i=0; i<=220; i++)); do
+    progress=$(printf "%${i}s" "")
+    progress=${progress// /▒}
+    echo -ne "${LIGHT_BLUE}\r[$progress]${NC}"
+    sleep 0.090
+done
+}
+
 echo -e "${LIGHT_BLUE}Subindo projeto...${NC}"
-docker compose up -d
-docker compose ps
-echo -e "${LIGHT_BLUE}Passando o K3s para node do rancher.${NC}"
-echo -e "${LIGHT_BLUE}Aguarde...${NC}"
-sleep 60
+docker compose up -d &
+wait $!
+echo -e "${LIGHT_RED}Parando container k3s...${NC}"
+yes | docker compose rm k3s -s -f -v
+# echo -e "${BROWN_ORANGE}Para colocar o contaner K3s como node do rancher, espere uns 3 minutos e execute ${NC}${PURPLE}novo-k3s-refazer-token.sh${NC}"
+echo -e "${LIGHT_BLUE}Aguardando subir o rancher para obter o token de acesso inicial...${NC}"
+
+loading &
+sleep 31
+echo
+
+./obter-senha-inicial-rancher.sh
+
+
+loading &
+sleep 31
+echo
+
 ./novo-k3s-refazer-token.sh

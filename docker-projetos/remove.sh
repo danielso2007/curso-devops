@@ -16,10 +16,11 @@ LIGHT_CYAN='\033[1;36m'
 LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
-echo -e "${BROWN_ORANGE}Parando projeto...${NC}"
-docker compose stop
+clear
+
 echo -e "${BROWN_ORANGE}Removendo docker...${NC}"
-yes | docker compose rm
+yes | docker compose rm -s -f -v &
+wait $!
 docker ps -a
 # Pergunta ao usuário
 echo -e "${LIGHT_RED}Deseja remover os volumes? (sim/não)${NC}"
@@ -28,9 +29,11 @@ read resposta
 if [[ "$resposta" == *"sim"* || "$resposta" == *"s"* ]]; then
     echo -e "${BROWN_ORANGE}Removendo volumes...${NC}"
     # Remove a pasta recursivamente
-    docker volume rm docker-projetos_rancher-data docker-projetos_k3s-config docker-projetos_k3s-data docker-projetos_k3s-cluster-config docker-projetos_k3s-cluster-data docker-projetos_nexus-data docker-projetos_postgresql docker-projetos_postgresql_data docker-projetos_sonarqube_data docker-projetos_sonarqube_extensions docker-projetos_sonarqube_logs
+    docker volume rm docker-projetos_rancher-data docker-projetos_k3s-config docker-projetos_k3s-data docker-projetos_k3s-cluster-config docker-projetos_k3s-cluster-data docker-projetos_nexus-data docker-projetos_postgresql docker-projetos_postgresql_data docker-projetos_sonarqube_data docker-projetos_sonarqube_extensions docker-projetos_sonarqube_logs &
+    wait $!
     sudo rm -rf ./k3s/output
     sudo rm -rf ./k3s/output-cluster
-    docker volume prune
+    yes | docker volume prune &
+    wait $!
     docker volume ls
 fi

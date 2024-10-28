@@ -22,13 +22,40 @@ rm -rf *.jks
 rm -rf *.der
 
 export OPENSSL_CN="nexus"
-export NEXUS_DOMAIN_OPENSSL_IP_ADDRESS="192.168.0.160"
+export OPENSSL_IP_ADDRESS="192.168.0.160"
 export OPENSSL_C=BR
 export OPENSSL_ST=SaoPaulo
 export OPENSSL_L=SaoPaulo
 export OPENSSL_O=MinhaEmpresa
 export OPENSSL_OU=TI
 export OPENSSL_PASS=123456
+
+# Analisando os argumentos
+while getopts ":d:i:s:h" opt; do
+  case $opt in
+    d)
+      OPENSSL_CN="$OPTARG"
+      ;;
+    i)
+      OPENSSL_IP_ADDRESS="$OPTARG"
+      ;;
+    s)
+      OPENSSL_PASS="$OPTARG"
+      ;;
+    h)
+      echo "Uso: $0 [-d domínio] [-i ip do docker] [-s senha do certifdicado]"
+      exit 0
+      ;;
+    \?)
+      echo "Opção inválida: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Opção -$OPTARG requer um argumento." >&2
+      exit 1
+      ;;
+  esac
+done
 
 openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-nexus-privada.key -out certificado-nexus.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 sudo cp certificado-nexus.crt /usr/local/share/ca-certificates/
@@ -39,8 +66,8 @@ openssl x509 -req -in node.csr -CA certificado-nexus.crt -CAkey key-nexus-privad
 
 openssl pkcs12 -export -out certificado-nexus.pfx -inkey key-nexus-privada.key -in certificado-nexus.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 
-keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-nexus.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${NEXUS_DOMAIN_OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
-sudo chown 666 keystore.jks
+keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-nexus.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
+sudo chown 400 keystore.jks
 
 #keytool -genkeypair -keystore keystore.jks -storepass 123456 -keypass 123456 -alias nexus -keyalg RSA -keysize 2048 -validity 5000 -dname "CN=*.${NEXUS_DOMAIN}, OU=Example, O=Sonatype, L=Unspecified, ST=Unspecified, C=BR" -ext "SAN=DNS:${NEXUS_DOMAIN},IP:${NEXUS_IP_ADDRESS}" -ext "BC=ca:true"
 

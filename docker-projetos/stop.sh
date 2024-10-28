@@ -1,3 +1,5 @@
 #/usr/bin/bash
-docker compose stop
+clear
+docker compose stop &
+wait $!
 docker compose ps

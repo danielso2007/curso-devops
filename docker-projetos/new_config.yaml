@@ -1,7 +1,7 @@
 services:
   jenkins:
     build:
-      context: .
+      context: ./
       dockerfile: ./jenkins/Dockerfile
     image: local/jenkins:latest
     container_name: jenkins-local
@@ -73,7 +73,7 @@ services:
       - ./nexus/etc/nexus.properties:/nexus-data/etc/nexus.properties
       - ./nexus/jetty/jetty-https.xml:/opt/sonatype/nexus/etc/jetty/jetty-https.xml
     environment:
-      NEXUS_SECURITY_RANDOMPASSWORD: false  # Desabilitar senha aleatória na inicialização
+      NEXUS_SECURITY_RANDOMPASSWORD: false # Desabilitar senha aleatória na inicialização
       INSTALL4J_ADD_VM_PARAMS: "-Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m"
     networks:
       - sonar-jenkins-network
@@ -90,8 +90,8 @@ services:
       - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
       - K3S_KUBECONFIG_MODE=644
       - K3S_NODE_NAME=k3s-node
-      - K3S_URL=https://172.21.0.4:6443
-      - K3S_TOKEN=K10c11f5ec56dc6f3a2fb756bfd70d14823fae448f96a60a0f0d2126414215e82df::server:fbc40b5cd340d44a6f9a8f23103547eb
+      - K3S_URL=${endereco}
+      - K3S_TOKEN=K1038399660380a1a9a8a69a0fbd1c9232a0f929fa5aaf1536dd165ee3f89a3fe31::server:85f45561b963b90e29546a832d4a6a89
     volumes:
       - k3s-data:/var/lib/rancher/k3s
       - k3s-config:/etc/rancher/k3s
@@ -99,8 +99,8 @@ services:
       - ./k3s/registries/registries.yaml:/etc/rancher/k3s/registries.yaml
     ports:
       # - "6443:6443"  # Porta padrão de API do Kubernetes
-      - "9280:80"    # Exemplo de porta para expor serviços
-      - "9243:443"   # Exemplo de porta HTTPS para expor serviços
+      - "9280:80" # Exemplo de porta para expor serviços
+      - "9243:443" # Exemplo de porta HTTPS para expor serviços
     command:
       - server
       - --cluster-init
@@ -148,8 +148,8 @@ services:
       - ./k3s/registries/registries.yaml:/etc/rancher/k3s/registries.yaml
     ports:
       # - "7443:6443"  # Porta padrão de API do Kubernetes
-      - "9480:80"    # Exemplo de porta para expor serviços
-      - "9443:443"   # Exemplo de porta HTTPS para expor serviços
+      - "9480:80" # Exemplo de porta para expor serviços
+      - "9443:443" # Exemplo de porta HTTPS para expor serviços
     command:
       - server
       - --cluster-init
@@ -160,7 +160,6 @@ services:
       - sonarqube
       - jenkins
       - nexus
-
 volumes:
   jenkins_home:
   sonarqube_data:
@@ -174,7 +173,6 @@ volumes:
   rancher-data:
   k3s-cluster-data:
   k3s-cluster-config:
-
 networks:
   sonar-jenkins-network:
   sonar-db-network:

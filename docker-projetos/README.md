@@ -48,6 +48,14 @@ Para testar a porta:
 telnet jenkins.local 9043
 ```
 
+# Obter o IP do proxy
+
+```shell
+docker inspect <nome_do_container> -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
+```
+docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
+
+
 # Nexus
 
 Para acessar: [nexus.local:9143/](https://nexus.local:8094/)
@@ -129,24 +137,26 @@ kubectl get pods --all-namespaces
 
 Temos um container `rancher` apenas para estudo, pois já instalamos um kubernate `K3s` anteriormente. 
 
-Para acessar o Rancher, obter a senha com o comando abaixo:
+Para acessar o Rancher, obter a senha com o comando abaixo (no final da execução do `start.sh` é aberto o browser automaticamente):
 
 ```shell
 docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
 
-$ rancher-local  | 2024/10/26 21:14:03 [INFO] Bootstrap Password: xxxxxxxx
-
+$ rancher-local  | 2024/10/26 21:14:03 [INFO] Bootstrap Password: xxxxxxxx # Automaticamente o shell start.sh abre o rancher
 ```
 
 Agora acesse [https://rancher.local:9343/dashboard/?setup=xxxxxxxx](https://rancher.local:9343/dashboard/?setup=xxxxxxxx).
 
-### Token para um novo node:
-
-Execute: `docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token`.
 
 # Incluindo um novo node no rancher do nosso container k3s
 
-Depois da primeira execução, é preciso executar o sh `novo-k3s-refazer-token.sh`. Ao executar, o container `k3s` é removido. Logo após, é obtido o token no container `rancher` para ser colocado na variável `K3S_TOKEN` do `docker compose` do nosso projeto. Após isso, um novo node será incluídos no `rancher` no cluster `local`.
+Depois da primeira execução, é preciso executar o sh `novo-k3s-refazer-token.sh`. Ao executar, o container `k3s` é removido, logo após, é obtido o token no container `rancher` e incluído automaticamente no `K3S_TOKEN` do `docker-compose.yml`. Após isso, um novo node será incluídos no `rancher` no cluster `local`.
+
+### Token para um novo node:
+
+Caso queira obter manualmente:
+
+Execute: `docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token`.
 
 # Novo cluster no rancher
 

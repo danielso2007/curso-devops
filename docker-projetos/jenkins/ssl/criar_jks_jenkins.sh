@@ -26,14 +26,41 @@ rm -rf *.pfx
 rm -rf *.csr
 rm -rf *.srl
 
-export OPENSSL_CN="nexus"
-export JENKINS_OPENSSL_IP_ADDRESS="192.168.0.160"
+export OPENSSL_CN="jenkins"
+export OPENSSL_IP_ADDRESS="192.168.0.160"
 export OPENSSL_C=BR
 export OPENSSL_ST=SaoPaulo
 export OPENSSL_L=SaoPaulo
 export OPENSSL_O=MinhaEmpresa
 export OPENSSL_OU=TI
 export OPENSSL_PASS=123456
+
+# Analisando os argumentos
+while getopts ":d:i:s:h" opt; do
+  case $opt in
+    d)
+      OPENSSL_CN="$OPTARG"
+      ;;
+    i)
+      OPENSSL_IP_ADDRESS="$OPTARG"
+      ;;
+    s)
+      OPENSSL_PASS="$OPTARG"
+      ;;
+    h)
+      echo "Uso: $0 [-d domínio] [-i ip do docker] [-s senha do certifdicado]"
+      exit 0
+      ;;
+    \?)
+      echo "Opção inválida: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Opção -$OPTARG requer um argumento." >&2
+      exit 1
+      ;;
+  esac
+done
 
 openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-jenkins-privada.key -out certificado-jenkins.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 sudo cp certificado-jenkins.crt /usr/local/share/ca-certificates/
@@ -44,8 +71,8 @@ openssl x509 -req -in node.csr -CA certificado-jenkins.crt -CAkey key-jenkins-pr
 
 openssl pkcs12 -export -out certificado-jenkins.pfx -inkey key-jenkins-privada.key -in certificado-jenkins.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 
-keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${JENKINS_OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
-sudo chown 666 keystore.jks
+keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
+sudo chown 400 keystore.jks
 
 rm -rf *.pem
 rm -rf *.der
