@@ -63,12 +63,12 @@ roleRef:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: cattle-credentials-5ad4478
+  name: cattle-credentials-54fc249
   namespace: cattle-system
 type: Opaque
 data:
   url: "aHR0cHM6Ly8xNzIuMjEuMC40"
-  token: "N3B0Y254bm5nYmdjeHdja2tuN25kcXR4d2JjazZzY21tbWg2eDR4YjZwZ3g4NGxibTRsN2to"
+  token: "Z21sNDRya256djh2cGR3bGw1ejhnZGhoOWI0eDd0Z3M4NzhiMnY5cjl2djl3endyenpwOXI3"
   namespace: ""
 
 ---
@@ -179,7 +179,7 @@ spec:
           - name: CATTLE_SERVER
             value: "https://172.21.0.4"
           - name: CATTLE_CA_CHECKSUM
-            value: "113574f2616a4e8600a69a73c0cd2ad090701e549bcf3f8acd5bdd40f528e49c"
+            value: "19992a1a6da403af5bff1f34bc76fe26539048e8637f0615095f645c17f510ce"
           - name: CATTLE_CLUSTER
             value: "true"
           - name: CATTLE_K8S_MANAGED
@@ -189,7 +189,7 @@ spec:
           - name: CATTLE_SERVER_VERSION
             value: v2.9-8fb2b1b4daa32e2a095219f88c3570c9a1ddb8ee-head
           - name: CATTLE_INSTALL_UUID
-            value: b5bd58c1-9555-4240-bcf6-7c75f6bf45ff
+            value: 70e66751-86e3-41c1-84b3-574f950ca703
           - name: CATTLE_INGRESS_IP_DOMAIN
             value: sslip.io
           - name: STRICT_VERIFY
@@ -202,7 +202,7 @@ spec:
       volumes:
       - name: cattle-credentials
         secret:
-          secretName: cattle-credentials-5ad4478
+          secretName: cattle-credentials-54fc249
           defaultMode: 320
   strategy:
     type: RollingUpdate

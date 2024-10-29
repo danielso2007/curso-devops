@@ -77,7 +77,7 @@ Criar um repositório para as imagens docker (registry docker).
 
 # Jenkins
 
-Inicialmente é gerada uma senha aleatório. Acesse `docker compose logs jenkins` para ver no console a senha.
+Inicialmente é gerada uma senha aleatório. Acesse `docker compose logs jenkins` para ver no console a senha. Também podemos obter a senha por `docker compose exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword`.
 
 Para acessar: [jenkins.local](http://jenkins.local)
 
@@ -162,24 +162,21 @@ Execute: `docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token
 
 No item anterior, colocamos um agente (node) no rancher. Agora estamos adicionando um cluster no rancher, para isso, foi criado um container `k3s-cluster` configurado para ser um kubernate normal. Para adicionado, seguir os passos abaixo:
 
-- Primeiro precisamos mudar o endereço para um interno do `k3s-cluster`, para isso, execute:
-    - Dentro do `k3s-cluster` o comando `telnet rancher 9999`;
-    - Irá mostrar o IP do rancher após um erro;
-    - Pegue esse IP;
+- Primeiro precisamos opter o IP do rancher:
+    - `docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'`
 - Acesse o rancher na parte `Global Settings` e `Settings`:
-    - No campo `server-url`, troque de `https://rancher.local/` para `https://172.21.0.4`;
-    - Esse IP é interno do cluster `k3s-cluster`;
+    - No campo `server-url`, troque de `https://rancher.local/` para `https://<IP_RANCHER>`;
     - **Observação**: isso é porque estamos com estudo e dentro de docker em produção não será assim;
     - Sempre olhe esse campo para futuras modificações.
-- Volte para a `home`, clicar em `Import Existing`;
+- Vá para a `home`, clicar em `Import Existing`;
 - Escolha `Import any Kubernetes cluster > Generic`;
 - Adicione um nome ao cluster: `k3s-cluster`;
 - Clique em `create`;
 - Será exibido vários ações, neste momento:
-    - Copie o endereço do `yaml` apenas, exemplo: `https://172.21.0.4/v3/import/x6mlgc6s87dg2mx6ls2dn.yaml`;
+    - Copie o endereço do `yaml` apenas, exemplo: `https://rancher.local/v3/import/5ljwpnfr4gnq9jxhrs5tsns4km6h7cbf5dfzgqwx4gpct7v4xwvbqc_c-m-zphfb8s2.yaml`;
     - Copie o conteúdo e adicione no arquivo `./k3s/yaml/cluster.yaml`;
     - Esse arquivo está como volume do nosso container `k3s-cluster`.
-- Agora acesse via `exec` o container `k3s-cluster`;
+- Agora acesse via `exec -it` (ou outro modo) o container `k3s-cluster`;
 - Acesse a paster `/opt/yaml`;
 - Excecute `kubectl apply -f cluster.yaml` para adicionar o cluster ao rancher;
 - Se tudo der certo, será criado um novo cluster no rancher.
