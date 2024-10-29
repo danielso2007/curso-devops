@@ -16,17 +16,12 @@ LIGHT_CYAN='\033[1;36m'
 LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
-echo -e "${LIGHT_BLUE}Criando certificado para o Jenkins...${NC}"
+echo -e "${LIGHT_BLUE}Criando certificado para o Sonar...${NC}"
 rm -rf *.pem
 rm -rf *.jks
 rm -rf *.der
-rm -rf *.crt
-rm -rf *.key
-rm -rf *.pfx
-rm -rf *.csr
-rm -rf *.srl
 
-export OPENSSL_CN="jenkins.local"
+export OPENSSL_CN="sonar.local"
 export OPENSSL_IP_ADDRESS="192.168.0.160"
 export OPENSSL_C=BR
 export OPENSSL_ST=SaoPaulo
@@ -62,16 +57,16 @@ while getopts ":d:i:s:h" opt; do
   esac
 done
 
-openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-jenkins-privada.key -out certificado-jenkins.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
-sudo cp certificado-jenkins.crt /usr/local/share/ca-certificates/
+openssl req -x509 -nodes -days 5000 -newkey rsa:2048 -keyout key-sonar-privada.key -out certificado-sonar.crt -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+sudo cp certificado-sonar.crt /usr/local/share/ca-certificates/
 sudo update-ca-certificates
 openssl req -newkey rsa:2048 -nodes -keyout node.key -out node.csr -subj "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 
-openssl x509 -req -in node.csr -CA certificado-jenkins.crt -CAkey key-jenkins-privada.key -CAcreateserial -out certificado-jenkins.csr -days 5000
+openssl x509 -req -in node.csr -CA certificado-sonar.crt -CAkey key-sonar-privada.key -CAcreateserial -out certificado-sonar.csr -days 5000
 
-openssl pkcs12 -export -out certificado-jenkins.pfx -inkey key-jenkins-privada.key -in certificado-jenkins.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
+openssl pkcs12 -export -out certificado-sonar.pfx -inkey key-sonar-privada.key -in certificado-sonar.crt -passin pass:${OPENSSL_PASS} -passout pass:${OPENSSL_PASS}
 
-keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-jenkins.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
+keytool -importkeystore -storepass ${OPENSSL_PASS} -keypass ${OPENSSL_PASS} -srckeystore certificado-sonar.pfx -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype pkcs12 -dname "/C=${OPENSSL_C}/ST=${OPENSSL_ST}/L=${OPENSSL_L}/O=${OPENSSL_O}/OU=${OPENSSL_OU}/CN=${OPENSSL_CN}" -ext "SAN=DNS:${OPENSSL_CN},IP:${OPENSSL_IP_ADDRESS}" -ext "BC=ca:true"
 sudo chown 400 keystore.jks
 
 rm -rf *.pem

@@ -26,7 +26,7 @@ senha_rancher=$(docker compose logs rancher 2>&1 | grep "Bootstrap Password:"  |
 
 docker compose logs rancher 2>&1 | grep "Bootstrap Password:"  | sed 's/.*Password: //' | xclip -selection clipboard
 
-link="https://rancher.local:9343/dashboard/?setup=${senha_rancher}"
+link="https://rancher.local/dashboard/?setup=${senha_rancher}"
 
 echo -e "${BROWN_ORANGE}Senha inicial do rancher copiada na memória!!${NC}"
 echo -e "${BROWN_ORANGE}Acesse:${NC} ${LIGHT_CYAN}${link}${NC}"

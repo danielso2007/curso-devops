@@ -32,6 +32,11 @@
             "label": "Criar certificados",
             "type": "shell",
             "command": "./criar-certificados.sh"
+        },
+        {
+            "label": "Reiniciar nginx",
+            "type": "shell",
+            "command": "docker compose restart nginx && docker compose logs nginx -f"
         }
     ]
 }

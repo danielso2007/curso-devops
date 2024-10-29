@@ -21,7 +21,7 @@ rm -rf *.pem
 rm -rf *.jks
 rm -rf *.der
 
-export OPENSSL_CN="nexus"
+export OPENSSL_CN="nexus.local"
 export OPENSSL_IP_ADDRESS="192.168.0.160"
 export OPENSSL_C=BR
 export OPENSSL_ST=SaoPaulo
@@ -73,8 +73,6 @@ sudo chown 400 keystore.jks
 
 rm -rf *.pem
 rm -rf *.der
-rm -rf *.crt
-rm -rf *.key
 rm -rf *.pfx
 rm -rf *.csr
 rm -rf *.srl

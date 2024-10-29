@@ -3,7 +3,7 @@
 Essa pasta juntou todos os estudos em um único docker.
 Para iniciar:
 
-1. Faça a ação do item `DNS local`;
+1. Faça a ação do item `DNS local` para acessar as aplicações;
 2. Execute o sh `./criar-certificados.sh`, para criar os certificados auto assinados;
 3. Execute `./start.sh`;
 4. Após subir os containers, executar `./novo-k3s-refazer-token.sh`:
@@ -58,7 +58,7 @@ docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress
 
 # Nexus
 
-Para acessar: [nexus.local:9143/](https://nexus.local:8094/)
+Para acessar: [nexus.local](https://nexus.local)
 
 Por padrão, o usuário é `admin` e senha é `admin123`.
 
@@ -79,11 +79,11 @@ Criar um repositório para as imagens docker (registry docker).
 
 Inicialmente é gerada uma senha aleatório. Acesse `docker compose logs jenkins` para ver no console a senha.
 
-Para acessar: [jenkins.local:9043/](http://jenkins.local:9043/)
+Para acessar: [jenkins.local](http://jenkins.local)
 
 ### Configurando o Sonar Scanner
 
-Acesse as configurações do Jenkins: [jenkins.local:9043/manage/configure](http://jenkins.local:9090/manage/configure).
+Acesse as configurações do Jenkins: [jenkins.local/manage/configure](http://jenkins.local/manage/configure).
 
 Ir até o título `SonarQube servers`:
 - `Environment variables` = check true
@@ -97,7 +97,7 @@ Ir até o título `SonarQube servers`:
 
 ### Configurar o tools
 
-Ir em [jenkins.local:9043/manage/configureTools](http://jenkins.local:9043/manage/configureTools/). Acessar: SonarQube Scanner instalações.
+Ir em [jenkins.local/manage/configureTools](http://jenkins.local/manage/configureTools/). Acessar: SonarQube Scanner instalações.
 
 Ir até o título `SonarQube Scanner instalações`:
 - Name: sonar-scanner
@@ -106,13 +106,13 @@ Ir até o título `SonarQube Scanner instalações`:
 
 ### Associado ao projeto jenkins - Docker SonarQube
 
-Para retonar o resultado para o jenkins, configurar o Webhooks lá no sonarQube: [sonar.local:9000/admin/webhooks](http://sonar.local:9000/admin/webhooks)
+Para retonar o resultado para o jenkins, configurar o Webhooks lá no sonarQube: [sonar.local/admin/webhooks](http://sonar.local/admin/webhooks)
 
-Adicionar: `http://jenkins:9043/sonarqube-webhook/`
+Adicionar: `http://jenkins/sonarqube-webhook/`
 
 # Sonarqube
 
-Acesse o link: [sonar.local:9000/](http://sonar.local:9000/).
+Acesse o link: [sonar.local](http://sonar.local).
 
 Na primeira instalação, o login e senha são `admin`.
 
@@ -145,7 +145,7 @@ docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
 $ rancher-local  | 2024/10/26 21:14:03 [INFO] Bootstrap Password: xxxxxxxx # Automaticamente o shell start.sh abre o rancher
 ```
 
-Agora acesse [https://rancher.local:9343/dashboard/?setup=xxxxxxxx](https://rancher.local:9343/dashboard/?setup=xxxxxxxx).
+Agora acesse [https://rancher.local/dashboard/?setup=xxxxxxxx](https://rancher.local/dashboard/?setup=xxxxxxxx).
 
 
 # Incluindo um novo node no rancher do nosso container k3s
@@ -167,7 +167,7 @@ No item anterior, colocamos um agente (node) no rancher. Agora estamos adicionan
     - Irá mostrar o IP do rancher após um erro;
     - Pegue esse IP;
 - Acesse o rancher na parte `Global Settings` e `Settings`:
-    - No campo `server-url`, troque de `https://rancher.local:9343/` para `https://172.21.0.4`;
+    - No campo `server-url`, troque de `https://rancher.local/` para `https://172.21.0.4`;
     - Esse IP é interno do cluster `k3s-cluster`;
     - **Observação**: isso é porque estamos com estudo e dentro de docker em produção não será assim;
     - Sempre olhe esse campo para futuras modificações.

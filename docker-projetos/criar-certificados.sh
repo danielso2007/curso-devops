@@ -16,7 +16,7 @@ LIGHT_CYAN='\033[1;36m'
 LIGHT_GRAY='\033[0;37m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
-echo -e "${LIGHT_BLUE}Subindo projeto...${NC}"
+echo -e "${LIGHT_BLUE}Criando credenciais...${NC}"
 cd nexus/ssl
 ./criar_jks_nexus.sh
 cd ..
@@ -25,3 +25,19 @@ cd jenkins/ssl
 ./criar_jks_jenkins.sh
 cd ..
 cd ..
+cd sonar/ssl
+./criar_jks_sonar.sh
+cd ..
+cd ..
+cd rancher/ssl
+./criar_jks_rancher.sh
+cd ..
+cd ..
+data_path="./nginx/certbot"
+if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
+  echo -e "${LIGHT_BLUE}Downloading recommended TLS parameters...${NC}"
+  mkdir -p "$data_path"
+  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "$data_path/options-ssl-nginx.conf"
+  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "$data_path/ssl-dhparams.pem"
+  echo
+fi

@@ -36,4 +36,4 @@ sed -i "s/K3S_URL=[^ ]*/K3S_URL=https:\/\/${ip_rancher}:6443/g" docker-compose.y
 echo -e "${BROWN_ORANGE}Subindo container K3s...${NC}"
 docker compose up -d &
 wait $!
-docker compose logs k3s -f
+# docker compose logs k3s -f
