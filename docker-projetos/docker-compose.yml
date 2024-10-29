@@ -1,4 +1,21 @@
 services:
+  reverse:
+    container_name: reverse
+    hostname: reverse
+    image: nginx:1.27.2-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/includes/:/etc/nginx/includes/
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      local:
+        ipv4_address: 11.5.0.2
   jenkins:
     build:
       context: .
