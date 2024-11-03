@@ -3,7 +3,7 @@ services:
     container_name: nginx
     hostname: nginx
     image: nginx:1.27.2-alpine
-    restart: none
+    restart: unless-stopped
     ports:
       # - 80:80
       - 443:443
@@ -130,7 +130,7 @@ services:
       - K3S_KUBECONFIG_MODE=644
       - K3S_NODE_NAME=k3s-node
       - K3S_URL=https://172.21.0.4:6443
-      - K3S_TOKEN=K10c292a975315ff69fa684f8129f1395c287a0d2db4dc7fb2f799d204f6e5b04d4::server:5e55619a0847b37e67eb91a11c9400d2
+      - K3S_TOKEN=K101d2f1f5fce84a60920662deb8e48de586050e2984926522b94065267d5af3553::server:53e2c83cc9f0faa00ed4990a1219ef9e
     volumes:
       - k3s-data:/var/lib/rancher/k3s
       - k3s-config:/etc/rancher/k3s
