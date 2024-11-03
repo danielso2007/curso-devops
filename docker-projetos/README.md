@@ -1,20 +1,48 @@
-# Docker Projetos
+## Índice
 
-Essa pasta juntou todos os estudos em um único docker.
-Para iniciar:
+* [Introdução](#introducao)
+* [Docker Projetos](#docker-projetos)
+    * [DNS local](#dns-local)
+    * [Portas do network interno docker](#portas-do-network-interno-docker)
+    * [Próximos passos](#próximos-passos)
+* [Obter o IP do proxy](#obter-o-ip-do-proxy)
+* [Configuração Nexus](./doc/nexus/README.md)
+* [Configuração Jenkins](./doc/jenkins/README.md)
+* [Configuração Sonar](./doc/sonar/README.md)
+* [Configuração Kubernate](./doc/k3s/README.md)
+* [Configuração Rancher](./doc/rancher/README.md)
 
-1. Faça a ação do item `DNS local` para acessar as aplicações;
+## Introdução <a name="introducao"></a>
+
+O objetivo desse projeto e juntar todo o estudo de devOps em containers docker. Os outros projetos de reposiório podem ser estudados separadamente. Um observação importante é que tudo está levando em consideração que o seu sistema operacional é o Ubuntu.
+
+## Docker Projetos <a name="docker-projetos"></a>
+
+Esse projeto usa o nginx para proxy reverso. Todos os containers estão com as portas fechados, só podendo ser acessados por proxy. Abaixo, devemos adicionar o DNS na nossa máquima, para facilitar o acesso aos projetos e estudos.
+
+Um observação inportante é que nem todos os containers estão na mesmo **network do docker**.
+
+Para iniciar, siga os passos abaixo:
+
+1. Faça a ação do item [DNS local](#dns-local) para acessar as aplicações;
 2. Execute o sh `./criar-certificados.sh`, para criar os certificados auto assinados;
-3. Execute `./start.sh`;
-4. Após subir os containers, executar `./novo-k3s-refazer-token.sh`:
-    - Irá parar o container `k3s`;
-    - Exibirá o token do `rancher` para criação de novo node;
-    - Ajuste o `docker-compose.yml`, conforme ação do item `Incluindo um novo node no rancher do nosso container k3s`
-    - O container será reiniciado.
+3. Execute `./start.sh`. No processo, o container k3s será adicionado como node automaticamente. Mas detalhes [aqui](./doc/start/README.md);
+4. Será aberto um browser direcionando para o [rancher](https://rancher.local/dashboard/auth/setup);
 5. No `rancher`, o nosso container `K3s` aparecerá como node no cluster `local`;
-6. Continue com as ações abaixo para seguir com as configurações.
+6. Para continuar com as configurações iniciais, seguir os próximos passos.
 
-# DNS local
+## Próximos passos <a name="próximos-passos"></a>
+
+Esse são os passos após iniciar o `./start.sh` informado no passo [Docker Projetos](#docker-projetos):
+
+1. Configurar o [nexus](./doc/nexus/README.md);
+2. Configurar o [jenkins](./doc/jenkins/README.md);
+3. Configurar o [Sonar](./doc/sonar/README.md);
+4. Configurar o [Kubernate - k3s](./doc/k3s/README.md);
+5. Configurar o [Rancher](./doc/rancher/README.md);
+
+
+### DNS local <a name="dns-local"></a>
 
 Recomendo nomes para facilitar nosso acesso aos containers:
 
@@ -30,17 +58,22 @@ Edite o arquivo adicionando os nomes:
 127.0.0.1 nexus.local
 127.0.0.1 k3s.local
 127.0.0.1 rancher.local
+127.0.0.1 redis.app
 ```
 
-## Portas
+### Portas do network interno docker <a name="portas-do-network-interno-docker"></a>
+
+As portas configuradas para as aplicações, podendo ser usadas apenas internamente dentro dos containers de mesmo network.
 
 | APP | HTTP | HTTPS | OUTRO | DNS |
 |---|---|---|---|---|
+| Nginx | 80 | 443 | X | localhost |
 | Jenkine | X | 9043 | 50000 | jenkins.local |
 | SonarQube | 9000 | X | X | sonar.local |
 | Nexus | X | 9143 | 8123 | nexus.local |
 | K3S | 9280 | 9243 | 6443 | k3s.local |
 | Rancher | 9380 | 9343 | X | rancher.local |
+
 
 Para testar a porta:
 
@@ -48,156 +81,16 @@ Para testar a porta:
 telnet jenkins.local 9043
 ```
 
-# Obter o IP do proxy
+## Obter o IP do proxy <a name="obter-o-ip-do-proxy"></a>
+
+Comando para obter o `ip` de um conatainer:
 
 ```shell
 docker inspect <nome_do_container> -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
 ```
+
+Exemplo para obter o `ip` do rancher:
+
+```shell
 docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
-
-
-# Nexus
-
-Para acessar: [nexus.local](https://nexus.local)
-
-Por padrão, o usuário é `admin` e senha é `admin123`.
-
-## Criando usuário para integração com o jenkins
-
-Para a integração com o jenkins, criar um usuário login `jenkins` e senha `jenkins123`. É preciso criar no Jenkins das credenciais, com ID `jenkins-nexus` e usar o login e senha criados no nexus.
-
-## Criar um docker repo
-
-Criar um repositório para as imagens docker (registry docker).
-
-- Repositories
-  - docker (hosted)
-    - nome: `docker-repo`
-    - HTTPS: `8123` | Exposto lá no docker compose
-
-# Jenkins
-
-Inicialmente é gerada uma senha aleatório. Acesse `docker compose logs jenkins` para ver no console a senha. Também podemos obter a senha por `docker compose exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword`.
-
-Para acessar: [jenkins.local](http://jenkins.local)
-
-### Configurando o Sonar Scanner
-
-Acesse as configurações do Jenkins: [jenkins.local/manage/configure](http://jenkins.local/manage/configure).
-
-Ir até o título `SonarQube servers`:
-- `Environment variables` = check true
-- Add SonarQube
-- Name: sonar-sever
-- Server URL: http:sonarqube:9000
-- Add Server authentication token --> Criar lá no sonar
-  - Kind: `Secret text`
-  - Secret: adicionar o token criado no Sonar
-  - ID: secret-sonar
-
-### Configurar o tools
-
-Ir em [jenkins.local/manage/configureTools](http://jenkins.local/manage/configureTools/). Acessar: SonarQube Scanner instalações.
-
-Ir até o título `SonarQube Scanner instalações`:
-- Name: sonar-scanner
-- Não instalar automaticamente
-- SONAR_RUNNER_HOME: `/opt/sonar-scanner`
-
-### Associado ao projeto jenkins - Docker SonarQube
-
-Para retonar o resultado para o jenkins, configurar o Webhooks lá no sonarQube: [sonar.local/admin/webhooks](http://sonar.local/admin/webhooks)
-
-Adicionar: `http://jenkins/sonarqube-webhook/`
-
-# Sonarqube
-
-Acesse o link: [sonar.local](http://sonar.local).
-
-Na primeira instalação, o login e senha são `admin`.
-
-Para que o sonar retorne o resultado para o Jenkins, ver o item **Associado ao projeto jenkins - Docker SonarQube**.
-
-# K3s - Kubernete
-
-Documentação: [docs.k3s.io/quick-start](https://docs.k3s.io/quick-start).
-
-Caso desejar acessando o container:
-```shell
-docker compose exec k3s sh
-```
-
-Listar todos os Pods:
-
-```shell
-kubectl get pods --all-namespaces
-```
-
-# Rancher
-
-Temos um container `rancher` apenas para estudo, pois já instalamos um kubernate `K3s` anteriormente. 
-
-Para acessar o Rancher, obter a senha com o comando abaixo (no final da execução do `start.sh` é aberto o browser automaticamente):
-
-```shell
-docker compose logs rancher 2>&1 | grep "Bootstrap Password:"
-
-$ rancher-local  | 2024/10/26 21:14:03 [INFO] Bootstrap Password: xxxxxxxx # Automaticamente o shell start.sh abre o rancher
-```
-
-Agora acesse [https://rancher.local/dashboard/?setup=xxxxxxxx](https://rancher.local/dashboard/?setup=xxxxxxxx).
-
-
-# Incluindo um novo node no rancher do nosso container k3s
-
-Depois da primeira execução, é preciso executar o sh `novo-k3s-refazer-token.sh`. Ao executar, o container `k3s` é removido, logo após, é obtido o token no container `rancher` e incluído automaticamente no `K3S_TOKEN` do `docker-compose.yml`. Após isso, um novo node será incluídos no `rancher` no cluster `local`.
-
-### Token para um novo node:
-
-Caso queira obter manualmente:
-
-Execute: `docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token`.
-
-# Novo cluster no rancher
-
-No item anterior, colocamos um agente (node) no rancher. Agora estamos adicionando um cluster no rancher, para isso, foi criado um container `k3s-cluster` configurado para ser um kubernate normal. Para adicionado, seguir os passos abaixo:
-
-- Primeiro precisamos opter o IP do rancher:
-    - `docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'`
-- Acesse o rancher na parte `Global Settings` e `Settings`:
-    - No campo `server-url`, troque de `https://rancher.local/` para `https://<IP_RANCHER>`;
-    - **Observação**: isso é porque estamos com estudo e dentro de docker em produção não será assim;
-    - Sempre olhe esse campo para futuras modificações.
-- Vá para a `home`, clicar em `Import Existing`;
-- Escolha `Import any Kubernetes cluster > Generic`;
-- Adicione um nome ao cluster: `k3s-cluster`;
-- Clique em `create`;
-- Será exibido vários ações, neste momento:
-    - Copie o endereço do `yaml` apenas, exemplo: `https://rancher.local/v3/import/5ljwpnfr4gnq9jxhrs5tsns4km6h7cbf5dfzgqwx4gpct7v4xwvbqc_c-m-zphfb8s2.yaml`;
-    - Copie o conteúdo e adicione no arquivo `./k3s/yaml/cluster.yaml`;
-    - Esse arquivo está como volume do nosso container `k3s-cluster`.
-- Agora acesse via `exec -it` (ou outro modo) o container `k3s-cluster`;
-- Acesse a paster `/opt/yaml`;
-- Excecute `kubectl apply -f cluster.yaml` para adicionar o cluster ao rancher;
-- Se tudo der certo, será criado um novo cluster no rancher.
-
-## Caso precise examinar o Pod criado
-
-Em alguns caso, pode dar erro e você precise analisar, então abaixo alguns comandos úteis:
-
-Ver todos os pods:
-```shell
-kubectl get pods --all-namespaces
-```
-
-Ver os logs do pod:
-```shell
-kubectl logs <NOME-DO-POD> -n <NAME-SPACE>
-```
-
-## Deletando o pod criado
-
-Se precisar deletar o pod que foi criado o cluster no rancher, execute o comando baixo:
-```shell
-kubectl delete -f cluster.yaml 
 ```

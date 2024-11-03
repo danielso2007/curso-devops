@@ -5,7 +5,7 @@ services:
     image: nginx:1.27.2-alpine
     restart: unless-stopped
     ports:
-      # - 80:80
+      - 80:80
       - 443:443
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
@@ -103,8 +103,8 @@ services:
     privileged: true
     user: root
     # ports:
-    #   - "9143:8094"
     #   - "8123:8123"
+    #   - "9143:8094"
     volumes:
       - nexus-data:/nexus-data
       - ./nexus/ssl:/nexus-data/etc/ssl
@@ -130,7 +130,7 @@ services:
       - K3S_KUBECONFIG_MODE=644
       - K3S_NODE_NAME=k3s-node
       - K3S_URL=https://172.21.0.4:6443
-      - K3S_TOKEN=K101d2f1f5fce84a60920662deb8e48de586050e2984926522b94065267d5af3553::server:53e2c83cc9f0faa00ed4990a1219ef9e
+      - K3S_TOKEN=K10a4b41a77b20e4d032b1b6de73ab773c41e928d1b42416493c2a982c9bb2f829a::server:a03d9a07b931db8e095effd7b91f718d
     volumes:
       - k3s-data:/var/lib/rancher/k3s
       - k3s-config:/etc/rancher/k3s

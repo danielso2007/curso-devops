@@ -332,23 +332,23 @@ redis-server   1/1     1            1           36s
 
 Obter mais detalhes do deployment:
 ```shell
-k describe deployment redis-serve --namespace=estudo-redis-app
+kubectl describe deployment redis-serve --namespace=estudo-redis-app
 ```
 
 Listar os pods:
 ```shell
-k get pod --namespace=estudo-redis-app
-k describe pod redis-server-5678cd5ff6-6v2hr
+kubectl get pod --namespace=estudo-redis-app
+kubectl describe pod redis-server-5678cd5ff6-6v2hr
 ```
 
 Ver o log:
 ```shell
-k logs -f redis-server-5678cd5ff6-mzc7n --namespace=estudo-redis-app
+kubectl logs -f redis-server-5678cd5ff6-mzc7n --namespace=estudo-redis-app
 ```
 
 Detalhes do Pod:
 ```shell
-k get pod -o wide --namespace=estudo-redis-app
+kubectl get pod -o wide --namespace=estudo-redis-app
 kubectl get svc -n estudo-redis-app
 kubectl describe svc -n estudo-redis-app
 ```
@@ -360,12 +360,18 @@ Usar o arquivo `redis-app.yaml` que é o nosso projeto de estudos anteriores.
 Subindo um deployment:
 ```shell
 kubectl create namespace devops
-k apply -f redis-app.yaml --namespace=devops
+kubectl create secret docker-registry mydockercredentials --docker-server 172.18.0.4:8123 --docker-username jenkins --docker-password jenkins123
+kubectl apply -f redis-app.yaml --namespace=devops
+kubectl describe pod --namespace=devops
 ```
 
 Verificando de o deployment subiu:
 ```shell
 kubectl get deployment  -n devops
-k get pod -n devops
+kubectl get pod -n devops
+kubectl get pod -o wide --namespace=devops
+kubectl describe pod --namespace=devops
+kubectl get ingress --namespace=devops
+kubectl describe ingress --namespace=devops
 ```
 

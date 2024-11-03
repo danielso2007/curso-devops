@@ -1,7 +1,7 @@
 FROM jenkins/jenkins:lts-jdk17
 ENV JENKINS_HOME="/var/lib/jenkins"
 USER root
-RUN apt-get -qq update && apt-get -qq install -y lsb-release curl wget iputils-ping
+RUN apt-get -qq update && apt-get -qq install -y lsb-release curl wget iputils-ping telnet
 RUN mkdir ${JENKINS_HOME}
 RUN useradd jenklins
 RUN chown -R jenkins:root ${JENKINS_HOME}

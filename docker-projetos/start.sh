@@ -20,7 +20,7 @@ parar="start"
 clear
 
 loading() {
-for ((i=0; i<=220; i++)); do
+for ((i=0; i<=150; i++)); do
     progress=$(printf "%${i}s" "")
     progress=${progress// /▒}
     echo -ne "${LIGHT_BLUE}\r[$progress]${NC}"
