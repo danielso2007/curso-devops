@@ -27,7 +27,7 @@ echo -e "${LIGHT_RED}Deseja remover os volumes? (sim/não)${NC}"
 read resposta
 # Verifica a resposta e executa a ação correspondente
 if [[ "$resposta" == *"sim"* || "$resposta" == *"s"* ]]; then
-    echo -e "${BROWN_ORANGE}Removendo volumes...${NC}"
+    echo -e "${BROWN_ORANGE}Removendo volumes e network...${NC}"
     # Remove a pasta recursivamente
     docker volume rm docker-projetos_rancher-data docker-projetos_k3s-config docker-projetos_k3s-data docker-projetos_k3s-cluster-config docker-projetos_k3s-cluster-data docker-projetos_nexus-data docker-projetos_postgresql docker-projetos_postgresql_data docker-projetos_sonarqube_data docker-projetos_sonarqube_extensions docker-projetos_sonarqube_logs &
     wait $!
@@ -36,4 +36,6 @@ if [[ "$resposta" == *"sim"* || "$resposta" == *"s"* ]]; then
     yes | docker volume prune &
     wait $!
     docker volume ls
+    docker network rm docker-projetos_projeto-devops-network docker-projetos_sonar-db-network
+    docker network ls
 fi

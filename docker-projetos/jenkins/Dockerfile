@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:lts-jdk17
+FROM jenkins/jenkins:2.479.1-lts-jdk17
 ENV JENKINS_HOME="/var/lib/jenkins"
 USER root
 RUN apt-get -qq update && apt-get -qq install -y lsb-release curl wget iputils-ping telnet
@@ -13,6 +13,10 @@ RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debia
 RUN apt update
 RUN apt-cache policy docker-ce
 RUN apt install -y docker-ce
+
+RUN curl -sL https://deb.nodesource.com/setup_23.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh 
+RUN apt install -y nodejs
 
 RUN usermod -aG docker root
 RUN usermod -aG docker jenkins
