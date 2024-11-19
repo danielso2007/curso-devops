@@ -83,7 +83,7 @@ telnet jenkins.local 9043
 
 ## Obter o IP do proxy <a name="obter-o-ip-do-proxy"></a>
 
-Comando para obter o `ip` de um conatainer:
+Comando para obter o `ip` de um container:
 
 ```shell
 docker inspect <nome_do_container> -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)

@@ -17,3 +17,4 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
 RUN curl -sL https://deb.nodesource.com/setup_23.x -o /tmp/nodesource_setup.sh
 RUN bash /tmp/nodesource_setup.sh 
 RUN apt install -y nodejs
+RUN echo "networkaddress.cache.ttl=5" >> "${JAVA_HOME}/conf/security/java.security"
