@@ -1,9 +1,9 @@
 mirrors:
   docker.io:
     endpoint:
-      - https://172.18.0.4:8123
+      - https://nexus:8123
 configs:
-  "172.18.0.4:8123":
+  "nexus:8123":
     auth:
       username: jenkins
       password: jenkins123

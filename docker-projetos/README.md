@@ -41,6 +41,7 @@ Esse são os passos após iniciar o `./start.sh` informado no passo [Docker Proj
 4. Configurar o [Kubernate - k3s](./doc/k3s/README.md);
 5. Configurar o [Rancher](./doc/rancher/README.md);
 
+Após as configurações, seguir com a subida do aplicação para testes no kubernete. Ir ao item [Fazendo o deployment da aplicação de estudo](README.md#fazendo-o-deployment-da-aplicação-de-estudo).
 
 ### DNS local <a name="dns-local"></a>
 
@@ -94,3 +95,87 @@ Exemplo para obter o `ip` do rancher:
 ```shell
 docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
 ```
+
+## Fazendo o deployment da aplicação redis
+
+Depois de tudo configurado vamos subir a nossa aplicação.
+
+1. Vamos subir o redis que será usado pelo nossa aplicação. Dentro da pastas `k3s/yaml/redis.yaml`, temos a configuração do `Deployment` e do `Service`. Entre no `rancher-local` e execute o comando:
+```shell
+cd /opt/project/
+kubectl create namespace estudo-redis-app
+kubectl apply -f redis.yaml
+```
+
+![Redis 01](./doc/img/image01.png)
+
+```shell
+kubectl get pod -n estudo-redis-app -o wide
+```
+
+O comando acima irá exibir o pod do redis.
+
+![Redis 02](./doc/img/image02.png)
+
+O comando abaixo retorna mais detalhes do pod.
+
+```shell
+kubectl get pod -n estudo-redis-app -o wide
+```
+
+ou
+
+```shell
+kubectl describe pod redis-server-5678cd5ff6-f5j9p -n estudo-redis-app
+```
+
+Listando o serviço desse pod:
+
+```shell
+kubectl get svc -n estudo-redis-app
+```
+
+![Redis 03](./doc/img/image03.png)
+
+Para obter os `ips` do node, execute o comando abaixo:
+
+```shell
+kubectl get nodes -o wide
+```
+
+## Subindo a aplicação do projeto de estudo
+
+**Obs:** Para a configuração de endereço DNS, estamos usando [https://sslip.io/](https://sslip.io/)
+
+1. Vamos subir o nosso projeto. Dentro da pastas `k3s/yaml/redis-app.yaml`, temos a configuração do `Deployment`, do `Service` e o `Ingress`. Entre no `rancher-local` e execute o comando:
+```shell
+cd /opt/project/
+kubectl create namespace estudo-redis-app # Se não existir
+kubectl apply -f redis-app.yaml
+```
+
+Exibindo os pods:
+
+```shell
+kubectl get pod -n estudo-redis-app -o wide
+```
+
+Detalhe dos pods:
+
+```shell
+kubectl describe pod devops-app-deployment-5d46f94b5f-9nc6z -n estudo-redis-app
+```
+
+Ver o traefik:
+
+```shell
+kubectl get ingress --all-namespaces
+kubectl describe ingress --all-namespaces
+kubectl get -n kube-system svc | grep traefik
+kubectl describe svc devops-app-service -n estudo-redis-app
+kubectl get all -A # Listar tudo
+```
+---
+Se tudo estiver ok, os pods estarão ok, conforme imagem abaixo:
+
+![Redis 04](./doc/img/image04.png)
