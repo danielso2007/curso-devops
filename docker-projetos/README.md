@@ -9,11 +9,11 @@
 * [Configuração Nexus](./doc/nexus/README.md)
 * [Configuração Jenkins](./doc/jenkins/README.md)
 * [Configuração Sonar](./doc/sonar/README.md)
-* [Configuração Kubernate](./doc/k3s/README.md)
+* [Configuração Kubernete](./doc/k3s/README.md)
 * [Configuração Rancher](./doc/rancher/README.md)
 * [Fazendo o deployment da aplicação redis](#fazendo-o-deployment-da-aplicação-redis)
 * [Subindo a aplicação do projeto de estudo](#subindo-a-aplicação-do-projeto-de-estudo)
-* [Deploy Contínuo com Jenkins e Kubernates](#deploy-contínuo-com-jenkins-e-kubernates)
+* [Deploy Contínuo com Jenkins e Kubernetes](#deploy-contínuo-com-jenkins-e-Kubernetes)
 
 ## Introdução <a name="introducao"></a>
 
@@ -41,7 +41,7 @@ Esse são os passos após iniciar o `./start.sh` informado no passo [Docker Proj
 1. Configurar o [nexus](./doc/nexus/README.md);
 2. Configurar o [jenkins](./doc/jenkins/README.md);
 3. Configurar o [Sonar](./doc/sonar/README.md);
-4. Configurar o [Kubernate - k3s](./doc/k3s/README.md);
+4. Configurar o [Kubernete - k3s](./doc/k3s/README.md);
 5. Configurar o [Rancher](./doc/rancher/README.md);
 
 Após as configurações, seguir com a subida do aplicação para testes no kubernete. Ir ao item [Fazendo o deployment da aplicação de estudo](README.md#fazendo-o-deployment-da-aplicação-de-estudo).
@@ -187,14 +187,14 @@ Se tudo estiver ok, os pods estarão ok, conforme imagem abaixo:
 
 ![Redis 04](./doc/img/image04.png)
 
-## Deploy Contínuo com Jenkins e Kubernates <a name="deploy-contínuo-com-jenkins-e-kubernates"></a>
+## Deploy Contínuo com Jenkins e Kubernetes <a name="deploy-contínuo-com-jenkins-e-Kubernetes"></a>
 
 ```shell
 docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token
 curl -sfL https://get.k3s.io | K3S_URL=https://rancher:6443 K3S_KUBECONFIG_MODE=644 K3S_NODE_NAME=k3s-node-jenkins K3S_TOKEN=K10d96373e8787b584621199368feaf903897e1ae36146ea3160701bc053bd5a730::server:5171807aeebfea617047bbb2e8366fa6 sh -
 ```
 
-Para integrar o Jeknins com o Kubernates, é preciso instalar o plug-in abaixo:
+Para integrar o Jeknins com o Kubernetes, é preciso instalar o plug-in abaixo:
 
 ![Jenkins-k3s 01](./doc/img/jenkins_kube-plugin.png)
 
@@ -202,7 +202,7 @@ Para verificar se o container jenkins tem acesso ao container do rancher-loca, e
 
 ![Jenkins-k3s 02](./doc/img/image_jenkins_k3s_02.png)
 
-Agora vamos configurar o nós cloud para esse acesso ao kubernates:
+Agora vamos configurar o nós cloud para esse acesso ao Kubernetes:
 
 ![Jenkins-k3s 03](./doc/img/image_jenkins_k3s_03.png)
 
@@ -210,11 +210,11 @@ New cloud:
 
 ![Jenkins-k3s 04](./doc/img/image_jenkins_k3s_04.png)
 
-Tipo Kubernates:
+Tipo Kubernetes:
 
 ![Jenkins-k3s 05](./doc/img/image_jenkins_k3s_05.png)
 
-### Antes de continuar, precisamos criar as credenciais no kubernate (rancher-local)
+### Antes de continuar, precisamos criar as credenciais no Kubernete (rancher-local)
 
 Acesse o container dp `rancher-local` e execute os comandos abaixo:
 
@@ -278,12 +278,12 @@ Criar as credenciais com o token obtido no k3s:
 
 ![Jenkins-k3s 08](./doc/img/image_jenkins_k3s_08.png)
 
-Depois continuar com a configuração do agente kubernate:
+Depois continuar com a configuração do agente Kubernete:
 
 ![Jenkins-k3s 09](./doc/img/image_jenkins_k3s_09.png)
 
-- **Name**: kubernates
-- **Kubernates URL**: https://rancher:6443
+- **Name**: Kubernetes
+- **Kubernetes URL**: https://rancher:6443
 - **Disable https certificate check**: true
 - **Credentials**: jenkins-k3s
 - **WebSocket**: true
