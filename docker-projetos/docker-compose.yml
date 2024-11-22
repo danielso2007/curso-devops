@@ -135,7 +135,7 @@ services:
       - ./k3s/output:/output
       - ./k3s/registries/registries.yaml:/etc/rancher/k3s/registries.yaml
     # ports:
-      # - "6443:6443"  # Porta padrão de API do Kubernetes
+      # - "8443:6443"  # Porta padrão de API do Kubernetes
       #- "9280:80"    # Exemplo de porta para expor serviços
       #- "9243:443"   # Exemplo de porta HTTPS para expor serviços
     command:
@@ -187,7 +187,7 @@ services:
       - ./k3s/yaml:/opt/yaml
       - ./k3s/registries/registries.yaml:/etc/rancher/k3s/registries.yaml
     # ports:
-    #   # - "7443:6443"  # Porta padrão de API do Kubernetes
+    #   - "9443:6443"  # Porta padrão de API do Kubernetes
     #   - "9480:80"    # Exemplo de porta para expor serviços
     #   - "9443:443"   # Exemplo de porta HTTPS para expor serviços
     command:
@@ -199,6 +199,25 @@ services:
       - sonarqube
       - jenkins
       - nexus
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: prometheus-local
+    hostname: prometheus
+    restart: unless-stopped
+    privileged: true
+    user: root
+    volumes:
+      - prometheus-data:/opt/bitnami/prometheus/data
+      - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+    # ports:
+      # - "9091:9090"
+    networks:
+      - projeto-devops-network
+    depends_on:
+      - sonarqube
+      - jenkins
+      - nexus
+      - rancher
 
 volumes:
   jenkins_home:
@@ -213,6 +232,7 @@ volumes:
   rancher-data:
   k3s-cluster-data:
   k3s-cluster-config:
+  prometheus-data:
 
 networks:
   sonar-db-network:

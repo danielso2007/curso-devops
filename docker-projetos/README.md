@@ -11,6 +11,9 @@
 * [Configuração Sonar](./doc/sonar/README.md)
 * [Configuração Kubernate](./doc/k3s/README.md)
 * [Configuração Rancher](./doc/rancher/README.md)
+* [Fazendo o deployment da aplicação redis](#fazendo-o-deployment-da-aplicação-redis)
+* [Subindo a aplicação do projeto de estudo](#subindo-a-aplicação-do-projeto-de-estudo)
+* [Deploy Contínuo com Jenkins e Kubernates](#deploy-contínuo-com-jenkins-e-kubernates)
 
 ## Introdução <a name="introducao"></a>
 
@@ -60,11 +63,13 @@ Edite o arquivo adicionando os nomes:
 127.0.0.1 k3s.local
 127.0.0.1 rancher.local
 127.0.0.1 redis.app
+127.0.0.1 prometheus.local
+127.0.0.1 prometheus.node
 ```
 
 ### Portas do network interno docker <a name="portas-do-network-interno-docker"></a>
 
-As portas configuradas para as aplicações, podendo ser usadas apenas internamente dentro dos containers de mesmo network.
+As portas configuradas para as aplicações, podendo ser usadas apenas internamente dentro dos containers de mesmo network, pois todos as aplicações não estão expostas.
 
 | APP | HTTP | HTTPS | OUTRO | DNS |
 |---|---|---|---|---|
@@ -74,6 +79,8 @@ As portas configuradas para as aplicações, podendo ser usadas apenas intername
 | Nexus | X | 9143 | 8123 | nexus.local |
 | K3S | 9280 | 9243 | 6443 | k3s.local |
 | Rancher | 9380 | 9343 | X | rancher.local |
+| Prometheus | 9090 | X | X | prometheus.local |
+| Prometheus Node | X | X | 9100 | prometheus.node |
 
 
 Para testar a porta:
@@ -96,7 +103,7 @@ Exemplo para obter o `ip` do rancher:
 docker inspect rancher-local -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --filter name=reverse -q)
 ```
 
-## Fazendo o deployment da aplicação redis
+## Fazendo o deployment da aplicação redis <a name="fazendo-o-deployment-da-aplicação-redis"></a>
 
 Depois de tudo configurado vamos subir a nossa aplicação.
 
@@ -143,7 +150,7 @@ Para obter os `ips` do node, execute o comando abaixo:
 kubectl get nodes -o wide
 ```
 
-## Subindo a aplicação do projeto de estudo
+## Subindo a aplicação do projeto de estudo <a name="subindo-a-aplicação-do-projeto-de-estudo"></a>
 
 **Obs:** Para a configuração de endereço DNS, estamos usando [https://sslip.io/](https://sslip.io/)
 
@@ -179,3 +186,118 @@ kubectl get all -A # Listar tudo
 Se tudo estiver ok, os pods estarão ok, conforme imagem abaixo:
 
 ![Redis 04](./doc/img/image04.png)
+
+## Deploy Contínuo com Jenkins e Kubernates <a name="deploy-contínuo-com-jenkins-e-kubernates"></a>
+
+```shell
+docker compose exec rancher cat /var/lib/rancher/k3s/server/node-token
+curl -sfL https://get.k3s.io | K3S_URL=https://rancher:6443 K3S_KUBECONFIG_MODE=644 K3S_NODE_NAME=k3s-node-jenkins K3S_TOKEN=K10d96373e8787b584621199368feaf903897e1ae36146ea3160701bc053bd5a730::server:5171807aeebfea617047bbb2e8366fa6 sh -
+```
+
+Para integrar o Jeknins com o Kubernates, é preciso instalar o plug-in abaixo:
+
+![Jenkins-k3s 01](./doc/img/jenkins_kube-plugin.png)
+
+Para verificar se o container jenkins tem acesso ao container do rancher-loca, execute o comando abaixo no container do jenkins:
+
+![Jenkins-k3s 02](./doc/img/image_jenkins_k3s_02.png)
+
+Agora vamos configurar o nós cloud para esse acesso ao kubernates:
+
+![Jenkins-k3s 03](./doc/img/image_jenkins_k3s_03.png)
+
+New cloud:
+
+![Jenkins-k3s 04](./doc/img/image_jenkins_k3s_04.png)
+
+Tipo Kubernates:
+
+![Jenkins-k3s 05](./doc/img/image_jenkins_k3s_05.png)
+
+### Antes de continuar, precisamos criar as credenciais no kubernate (rancher-local)
+
+Acesse o container dp `rancher-local` e execute os comandos abaixo:
+
+Criando o service account:
+
+```shell
+kubectl create serviceaccount jenkins -n estudo-redis-app
+```
+
+Crie uma associação de função com base na permissão necessária para o aplicativo usando o código abaixo:
+
+```shell
+cat <<EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+ name: jenkins-integration
+ labels:
+   k8s-app: jenkins-image-builder
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: estudo-redis-app
+EOF
+```
+
+Crie um segredo para a conta de serviço Jenkins:
+
+```shell
+cat <<EOF | kubectl create -f -
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+ name: jenkins
+ namespace: estudo-redis-app
+ annotations:
+   kubernetes.io/service-account.name: jenkins
+EOF
+```
+
+Em seguida, extraia o token usando o comando abaixo:
+
+```shell
+kubectl get secrets jenkins -n estudo-redis-app -o jsonpath='{.data.token}' | base64 -d
+```
+
+![Jenkins-k3s 06](./doc/img/image_jenkins_k3s_06.png)
+
+Também é possível obter o token no rancher:
+
+![Jenkins-k3s 07](./doc/img/image_jenkins_k3s_07.png)
+
+### Depois de obter o token no k3s, voltar com a configuração no jenkins
+
+Criar as credenciais com o token obtido no k3s:
+
+![Jenkins-k3s 08](./doc/img/image_jenkins_k3s_08.png)
+
+Depois continuar com a configuração do agente kubernate:
+
+![Jenkins-k3s 09](./doc/img/image_jenkins_k3s_09.png)
+
+- **Name**: kubernates
+- **Kubernates URL**: https://rancher:6443
+- **Disable https certificate check**: true
+- **Credentials**: jenkins-k3s
+- **WebSocket**: true
+
+## Usando o Prometheus <a name="usando-o-prometheus"></a>
+
+node_exporter
+
+https://prometheus.io/download/ 
+
+nohup ./node_exporter &
+
+http://prometheus.node:9100/
+
+http://192.168.0.160:9100/
+
+telnet 192.168.0.160 9100
