@@ -218,7 +218,20 @@ services:
       - jenkins
       - nexus
       - rancher
-
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - projeto-devops-network
+    depends_on:
+      - prometheus
 volumes:
   jenkins_home:
   sonarqube_data:
@@ -233,6 +246,7 @@ volumes:
   k3s-cluster-data:
   k3s-cluster-config:
   prometheus-data:
+  grafana-storage:
 
 networks:
   sonar-db-network:

@@ -2,9 +2,9 @@
 
 * [Introdução](#introducao)
 * [Docker Projetos](#docker-projetos)
-    * [DNS local](#dns-local)
-    * [Portas do network interno docker](#portas-do-network-interno-docker)
-    * [Próximos passos](#próximos-passos)
+  * [DNS local](#dns-local)
+  * [Portas do network interno docker](#portas-do-network-interno-docker)
+  * [Próximos passos](#próximos-passos)
 * [Obter o IP do proxy](#obter-o-ip-do-proxy)
 * [Configuração Nexus](./doc/nexus/README.md)
 * [Configuração Jenkins](./doc/jenkins/README.md)
@@ -14,6 +14,10 @@
 * [Fazendo o deployment da aplicação redis](#fazendo-o-deployment-da-aplicação-redis)
 * [Subindo a aplicação do projeto de estudo](#subindo-a-aplicação-do-projeto-de-estudo)
 * [Deploy Contínuo com Jenkins e Kubernetes](#deploy-contínuo-com-jenkins-e-Kubernetes)
+* [Usando o Prometheus](#usando-o-prometheus)
+  * [Executado o node_exporter localmente](#executado-o-node_exporter-localmente)
+* [Grafana](#grafana)
+  * [Dashboard do node exporter no grafana](#dashboard-do-node-exporter-no-grafana)
 
 ## Introdução <a name="introducao"></a>
 
@@ -65,6 +69,7 @@ Edite o arquivo adicionando os nomes:
 127.0.0.1 redis.app
 127.0.0.1 prometheus.local
 127.0.0.1 prometheus.node
+127.0.0.1 grafana.local
 ```
 
 ### Portas do network interno docker <a name="portas-do-network-interno-docker"></a>
@@ -290,14 +295,38 @@ Depois continuar com a configuração do agente Kubernete:
 
 ## Usando o Prometheus <a name="usando-o-prometheus"></a>
 
-node_exporter
+Para fins de demonstração, o Prometheus está sendo executado em um contêiner denominado `prometheus`. Para coletar métricas da máquina hospedeira, utilizaremos o `node_exporter`, um exporter específico para sistemas operacionais, disponível em [https://prometheus.io/download/](https://prometheus.io/download/). O `node_exporter` coletará diversas métricas de sistema, como utilização de CPU, memória, disco e rede, e as enviará para o Prometheus em intervalos regulares. Essas métricas serão armazenadas e disponibilizadas pelo Prometheus para visualização e análise.
 
-https://prometheus.io/download/ 
+#### Executado o node_exporter localmente <a name="executado-o-node_exporter-localmente"></a>
 
+Execute o comando abaixo na pasta do `node_exporter`:
+
+```shell
 nohup ./node_exporter &
+```
 
-http://prometheus.node:9100/
+Como seguimos a configuração do `/etc/hosts` o endereço do `prometheus` é [http://prometheus.node:9100/](http://prometheus.node:9100/).
 
-http://192.168.0.160:9100/
+Para que o `prometheus` acesse o `node_exporter`, o container sober com a seguinte configuração:
 
-telnet 192.168.0.160 9100
+- Local do volume: `prometheus/prometheus.yml`
+- Configuração do `static_configs`: http://192.168.0.160:9100/
+
+Usamos o endereço IP da máquina host.
+
+![prometheus 01](./doc/prometheus/prometheus-01.png)
+
+**Observação:** O `prometheus` está configurado na porta 80 do nginx.
+
+![prometheus 02](./doc/prometheus/prometheus-02.png)
+
+## Grafana <a name="grafana"></a>
+
+Temos um container com o `Grafana` para acessar a documetação: [https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/).
+
+Usaremos o dashboard do link abaixo:
+
+#### Dashboard do node exporter no grafana <a name="dashboard-do-node-exporter-no-grafana"></a>
+
+Baixar no endereço: [https://github.com/rfrail3/grafana-dashboards](https://github.com/rfrail3/grafana-dashboards/tree/master/prometheus).
+
