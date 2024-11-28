@@ -22,6 +22,8 @@ services:
       - ./sonar/ssl/certificado-sonar.crt:/etc/letsencrypt/live/sonar.local/certificado-sonar.crt
       - ./rancher/ssl/key-rancher-privada.key:/etc/letsencrypt/live/rancher.local/key-rancher-privada.key
       - ./rancher/ssl/certificado-rancher.crt:/etc/letsencrypt/live/rancher.local/certificado-rancher.crt
+      - ./grafana/etc/grafana/grafana.key:/etc/letsencrypt/live/grafana.local/grafana.key
+      - ./grafana/etc/grafana/grafana.crt:/etc/letsencrypt/live/grafana.local/grafana.crt
     networks:
       - projeto-devops-network
     depends_on:
@@ -224,10 +226,13 @@ services:
     restart: unless-stopped
     privileged: true
     user: root
-    ports:
-      - '3000:3000'
+    # ports:
+    #   - '3000:3000'
     volumes:
       - grafana-storage:/var/lib/grafana
+      - ./grafana/etc/grafana/grafana.ini:/usr/local/etc/grafana/grafana.ini
+      - ./grafana/etc/grafana/grafana.key:/etc/grafana/grafana.key
+      - ./grafana/etc/grafana/grafana.crt:/etc/grafana/grafana.crt
     networks:
       - projeto-devops-network
     depends_on:

@@ -324,9 +324,56 @@ Usamos o endereço IP da máquina host.
 
 Temos um container com o `Grafana` para acessar a documetação: [https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/).
 
-Usaremos o dashboard do link abaixo:
+Para acessar primeiramente do grafana use:
+
+- Login: admin
+- Pass: admin
+
+**Observação:** Para criar um novo datasource, é preciso configurar o nginx conforme abaixo (já configurado):
+
+![grafana 04](./doc/grafana/grafana-04.png)
 
 #### Dashboard do node exporter no grafana <a name="dashboard-do-node-exporter-no-grafana"></a>
 
-Baixar no endereço: [https://github.com/rfrail3/grafana-dashboards](https://github.com/rfrail3/grafana-dashboards/tree/master/prometheus).
+Baixar no endereço: [https://github.com/rfrail3/grafana-dashboards](https://github.com/rfrail3/grafana-dashboards/tree/master/prometheus) ou use em `grafana/dashboard/node-exporter-full.json`.
 
+![grafana 01](./doc/grafana/grafana-01.png)
+
+
+![grafana 02](./doc/grafana/grafana-02.png)
+
+
+![grafana 03](./doc/grafana/grafana-03.png)
+
+
+![grafana 05](./doc/grafana/grafana-05.png)
+
+
+![grafana 06](./doc/grafana/grafana-06.png)
+
+Só escolher o tipo de dados:
+
+![grafana 07](./doc/grafana/grafana-07.png)
+
+O dashboard importado:
+
+![grafana 08](./doc/grafana/grafana-08.png)
+
+### Teste de stress
+
+Para validar consumo dos dados via agente.
+
+Instale:
+
+```shell
+sudo apt-get install epel-release
+sudo apt-get install stress
+```
+
+Execute e veja no dashboard do grafana:
+
+```shell
+sudo stress --cpu 12 --io 8 --vm 4 --vm-bytes 1G --timeout 30s
+```
+
+![grafana 09](./doc/grafana/grafana-09.png)

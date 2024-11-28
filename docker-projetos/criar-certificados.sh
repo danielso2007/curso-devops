@@ -25,6 +25,10 @@ cd jenkins/ssl
 ./criar_jks_jenkins.sh
 cd ..
 cd ..
+cd grafana/ssl
+./criar_ssl-grafana.sh
+cd ..
+cd ..
 cd sonar/ssl
 ./criar_jks_sonar.sh
 cd ..
